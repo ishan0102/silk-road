@@ -4,6 +4,7 @@
 *.doc
 *.docx
 *.zip
+example/
 
 # Ignore entire IntelliJ directory
 .idea/

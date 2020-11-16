@@ -6,6 +6,10 @@
 *.zip
 example/
 
+# VS Code
+.vscode/
+lib/
+
 # Ignore entire IntelliJ directory
 .idea/
 *.iml

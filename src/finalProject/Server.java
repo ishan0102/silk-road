@@ -6,6 +6,9 @@
  * See the starter code for the Chat Program on Canvas.  
  * This code does not compile.
  */
+
+package finalProject;
+
 public class Server extends Observable {
 
     static Server server;

@@ -5,6 +5,8 @@
  * It doesn't compile.
  */
 
+package finalProject;
+
 public class ChatClient extends Application { 
 	// I/O streams 
 	ObjectOutputStream toServer = null; 

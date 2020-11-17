@@ -17,7 +17,8 @@ import com.google.gson.Gson;
 class Server extends Observable {
 
     public static void main(String[] args) {
-        new Server().runServer();
+        Server server = new Server();
+        server.runServer();
     }
 
     private void runServer() {
@@ -32,14 +33,13 @@ class Server extends Observable {
     private void setUpNetworking() throws Exception {
         @SuppressWarnings("resource")
         ServerSocket serverSock = new ServerSocket(4242);
-        while (true) {
+        while(true) {
             Socket clientSocket = serverSock.accept();
             System.out.println("Connecting to... " + clientSocket);
 
             ClientHandler handler = new ClientHandler(this, clientSocket);
-            this.addObserver(handler);
-
             Thread t = new Thread(handler);
+            this.addObserver(handler);
             t.start();
         }
     }

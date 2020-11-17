@@ -17,7 +17,6 @@ import java.util.Observer;
 import java.util.Observable;
 
 class ClientHandler implements Runnable, Observer {
-
     private Server server;
     private Socket clientSocket;
     private BufferedReader fromClient;

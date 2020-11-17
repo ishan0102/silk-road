@@ -16,7 +16,10 @@ import java.net.Socket;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-class Client {
+import javafx.application.Application;
+import javafx.stage.Stage;
+
+public class Client extends Application {
 
     private static String host = "127.0.0.1";
     private BufferedReader fromServer;
@@ -29,6 +32,8 @@ class Client {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        launch(args);
     }
 
     private void setUpNetworking() throws Exception {
@@ -79,6 +84,11 @@ class Client {
         System.out.println("Sending to server: " + string);
         toServer.println(string);
         toServer.flush();
+    }
+
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        UI.startClient(primaryStage);
     }
 
 }

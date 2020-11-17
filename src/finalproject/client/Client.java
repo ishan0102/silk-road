@@ -88,7 +88,8 @@ public class Client extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        UI.startClient(primaryStage);
+        UI gui = new UI(primaryStage);
+        gui.startGUI();
     }
 
 }

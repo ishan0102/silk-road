@@ -18,67 +18,67 @@ import com.google.gson.GsonBuilder;
 
 class Client {
 
-  private static String host = "127.0.0.1";
-  private BufferedReader fromServer;
-  private PrintWriter toServer;
-  private Scanner consoleInput = new Scanner(System.in);
+    private static String host = "127.0.0.1";
+    private BufferedReader fromServer;
+    private PrintWriter toServer;
+    private Scanner consoleInput = new Scanner(System.in);
 
-  public static void main(String[] args) {
-    try {
-      new Client().setUpNetworking();
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
-
-  private void setUpNetworking() throws Exception {
-    @SuppressWarnings("resource")
-    Socket socket = new Socket(host, 4242);
-    System.out.println("Connecting to... " + socket);
-    fromServer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-    toServer = new PrintWriter(socket.getOutputStream());
-
-    Thread readerThread = new Thread(new Runnable() {
-      @Override
-      public void run() {
-        String input;
+    public static void main(String[] args) {
         try {
-          while ((input = fromServer.readLine()) != null) {
-            System.out.println("From server: " + input);
-            processRequest(input);
-          }
+            new Client().setUpNetworking();
         } catch (Exception e) {
-          e.printStackTrace();
+            e.printStackTrace();
         }
-      }
-    });
+    }
 
-    Thread writerThread = new Thread(new Runnable() {
-      @Override
-      public void run() {
-        while (true) {
-          String input = consoleInput.nextLine();
-          String[] variables = input.split(",");
-          Message request = new Message(variables[0], variables[1], Integer.valueOf(variables[2]));
-          GsonBuilder builder = new GsonBuilder();
-          Gson gson = builder.create();
-          sendToServer(gson.toJson(request));
-        }
-      }
-    });
+    private void setUpNetworking() throws Exception {
+        @SuppressWarnings("resource")
+        Socket socket = new Socket(host, 4242);
+        System.out.println("Connecting to... " + socket);
+        fromServer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        toServer = new PrintWriter(socket.getOutputStream());
 
-    readerThread.start();
-    writerThread.start();
-  }
+        Thread readerThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String input;
+                try {
+                    while ((input = fromServer.readLine()) != null) {
+                        System.out.println("From server: " + input);
+                        processRequest(input);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
-  protected void processRequest(String input) {
-    return;
-  }
+        Thread writerThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    String input = consoleInput.nextLine();
+                    String[] variables = input.split(",");
+                    Message request = new Message(variables[0], variables[1], Integer.valueOf(variables[2]));
+                    GsonBuilder builder = new GsonBuilder();
+                    Gson gson = builder.create();
+                    sendToServer(gson.toJson(request));
+                }
+            }
+        });
 
-  protected void sendToServer(String string) {
-    System.out.println("Sending to server: " + string);
-    toServer.println(string);
-    toServer.flush();
-  }
+        readerThread.start();
+        writerThread.start();
+    }
+
+    protected void processRequest(String input) {
+        return;
+    }
+
+    protected void sendToServer(String string) {
+        System.out.println("Sending to server: " + string);
+        toServer.println(string);
+        toServer.flush();
+    }
 
 }

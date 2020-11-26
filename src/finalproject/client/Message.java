@@ -9,21 +9,20 @@
 package finalproject.client;
 
 public class Message {
-    String type;
-    String input;
-    int number;
-
-    protected Message() {
-        this.type = "";
-        this.input = "";
-        this.number = 0;
-        System.out.println("client-side message created");
+    enum Type {
+        SIGNIN, SIGNUP
     }
 
-    protected Message(String type, String input, int number) {
+    private Type type;
+    private User user;
+
+    public Message(Type type, User user) {
         this.type = type;
-        this.input = input;
-        this.number = number;
-        System.out.println("client-side message created");
+        this.user = user;
+    }
+
+    @Override
+    public String toString() {
+        return "name: " + user.name + " - email: " + user.email + " - password: " + user.password;
     }
 }

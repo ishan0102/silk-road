@@ -18,15 +18,15 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
-import javafx.scene.text.Text;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 public class UI {
-    public Stage stage;
+    private Stage stage;
+    private Client client;
 
-    public UI(Stage stage) {
+    public UI(Client client, Stage stage) {
         this.stage = stage;
+        this.client = client;
     }
 
     public void startGUI() {
@@ -117,6 +117,15 @@ public class UI {
         Label passwordLabel = new Label("Password");
         PasswordField passwordText = new PasswordField();
         Button signUpButton = new Button("Sign Up");
+        signUpButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                User user = new User(nameText.getText(), emailText.getText(), passwordText.getText());
+                Message message = new Message(Message.Type.SIGNIN, user);
+                client.sendToServer(message);
+            }
+        });
+
         Button goBackButton = new Button("Go Back");
         goBackButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -124,7 +133,7 @@ public class UI {
                 login();
             }
         });
-        
+
         signUpPane.add(nameLabel, 0, 0);
         signUpPane.add(nameText, 1, 0);
         signUpPane.add(emailLabel, 0, 1);

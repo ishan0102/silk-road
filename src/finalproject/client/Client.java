@@ -24,15 +24,8 @@ public class Client extends Application {
     private static String host = "127.0.0.1";
     private BufferedReader fromServer;
     private PrintWriter toServer;
-    private Scanner consoleInput = new Scanner(System.in);
 
     public static void main(String[] args) {
-        try {
-            new Client().setUpNetworking();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
         launch(args);
     }
 
@@ -57,38 +50,30 @@ public class Client extends Application {
                 }
             }
         });
-
-        Thread writerThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (true) {
-                    String input = consoleInput.nextLine();
-                    String[] variables = input.split(",");
-                    Message request = new Message(variables[0], variables[1], Integer.valueOf(variables[2]));
-                    GsonBuilder builder = new GsonBuilder();
-                    Gson gson = builder.create();
-                    sendToServer(gson.toJson(request));
-                }
-            }
-        });
-
         readerThread.start();
-        writerThread.start();
     }
 
     protected void processRequest(String input) {
         return;
     }
 
-    protected void sendToServer(String string) {
-        System.out.println("Sending to server: " + string);
-        toServer.println(string);
+    public void sendToServer(Message message) {
+        GsonBuilder builder = new GsonBuilder().setPrettyPrinting();
+        Gson gson = builder.create();
+        System.out.println("Sending to server: " + message);
+        toServer.println(gson.toJson(message));
         toServer.flush();
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        UI gui = new UI(primaryStage);
+        try {
+            this.setUpNetworking();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        UI gui = new UI(this, primaryStage);
         gui.startGUI();
     }
 

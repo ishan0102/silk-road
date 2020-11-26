@@ -47,6 +47,10 @@ class Server extends Observable {
 			db.initialize();
 			System.out.println("Database initialized successfully.");
 		} catch (SQLException sqle) {
+            if (sqle.getSQLState().equals("X0Y32")) {
+                System.out.println("Database already exists");
+                return;
+            }
 			System.out.println("Database initialization failed.");
 			sqle.printStackTrace();
 		}

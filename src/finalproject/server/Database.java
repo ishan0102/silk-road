@@ -32,42 +32,31 @@ class Database {
 		String createGuest = "CREATE TABLE guest (" +
 				"id INTEGER NOT NULL " +
 					"PRIMARY KEY GENERATED ALWAYS AS IDENTITY, " +
-				"name VARCHAR(255), " +
-				"visits INT NOT NULL, " +
-				"note VARCHAR(255), " +
+                "name VARCHAR(255), " +
+                "email VARCHAR(255), " +
+                "password VARCHAR(255), " +
 				"last_visit TIMESTAMP" +
-			")";
-		String createMessage = "CREATE TABLE message (" +
-				"id INTEGER NOT NULL " +
-					"PRIMARY KEY GENERATED ALWAYS AS IDENTITY, " +
-				"text VARCHAR(255) NOT NULL, " +
-				"guest_id INTEGER NOT NULL, " +
-
-				"FOREIGN KEY (guest_id) REFERENCES guest (id)" +
 			")";
 		try (
 			Connection connection = dataSource.getConnection();
 			Statement createGuestStatement = connection.createStatement();
-			Statement createMessageStatement = connection.createStatement();
 		) {
 			connection.setAutoCommit(false);
 			createGuestStatement.executeUpdate(createGuest);
-			createMessageStatement.executeUpdate(createMessage);
 			connection.commit();
 		}
 	}
 	
-	
 	int insertGuest(Guest guest) throws SQLException {
-		String insertGuest = "INSERT INTO guest (name, visits, note, last_visit) " +
+		String insertGuest = "INSERT INTO guest (name, email, password, last_visit) " +
 			"VALUES (?, ?, ?, ?)";
 		try (
 			Connection connection = dataSource.getConnection();
 			PreparedStatement insertGuestStatement = connection.prepareStatement(insertGuest, Statement.RETURN_GENERATED_KEYS);
 		) {
 			insertGuestStatement.setString(1, guest.getName());
-			insertGuestStatement.setInt(2, guest.getVisits());
-			insertGuestStatement.setString(3, guest.getNote());
+			insertGuestStatement.setString(2, guest.getEmail());
+			insertGuestStatement.setString(3, guest.getPassword());
 			insertGuestStatement.setTimestamp(4, Timestamp.from(guest.getLastVisit()));
 
 			insertGuestStatement.executeUpdate();
@@ -81,15 +70,15 @@ class Database {
 	
 	void updateGuest(Guest guest) throws SQLException {
 		String updateGuest = "UPDATE guest " +
-				"SET name = ?, visits = ?, note = ?, last_visit = ? " +
+				"SET name = ?, email = ?, password = ?, last_visit = ? " +
 				"WHERE id = ?";
 		try (
 			Connection connection = dataSource.getConnection();
 			PreparedStatement updateGuestStatement = connection.prepareStatement(updateGuest);
 		) {
 			updateGuestStatement.setString(1, guest.getName());
-			updateGuestStatement.setInt(2, guest.getVisits());
-			updateGuestStatement.setString(3, guest.getNote());
+			updateGuestStatement.setString(2, guest.getEmail());
+			updateGuestStatement.setString(3, guest.getPassword());
 			updateGuestStatement.setTimestamp(4, Timestamp.from(guest.getLastVisit()));
 			updateGuestStatement.setInt(5, guest.getId());
 			
@@ -117,71 +106,22 @@ class Database {
 		while (results.next()) {
 			int newId = results.getInt("id");
 			String name = results.getString("name");
-			int visits = results.getInt("visits");
-			String note = results.getString("note");
+            String email = results.getString("email");
+			String password = results.getString("password");
 			Instant lastVisited = results.getTimestamp("last_visit").toInstant();
 
-			guests.add(new Guest(newId, name, visits, note, lastVisited));
+			guests.add(new Guest(newId, name, email, password, lastVisited));
 		}
 		return guests;
 	}
 	
-	List<Guest> getAllGuests() throws SQLException {
-		String selectGuests = "SELECT * FROM guest";
-		try (
-			Connection connection = dataSource.getConnection();
-			PreparedStatement selectGuestsStatement = connection.prepareStatement(selectGuests);
-		) {
-			ResultSet results = selectGuestsStatement.executeQuery();
-
-			return readGuestResultSet(results);
-		}	
-    }
-
-	void insertMessage(Message message) throws SQLException {
-		String insertMessage = "INSERT INTO message (text, guest_id)" +
-				"VALUES (?, ?)";
-		try (
-			Connection connection = dataSource.getConnection();
-			PreparedStatement insertMessageStatement = connection.prepareStatement(insertMessage);
-		) {
-			insertMessageStatement.setString(1, message.getText());
-			insertMessageStatement.setInt(2, message.getGuestId());
-
-			insertMessageStatement.executeUpdate();
-		}
-	}
-	
-	List<String> getMessages(int guestId) throws SQLException {
-		String selectGuest = "SELECT * FROM message " +
-				"WHERE guest_id = ?";
-		try (
-			Connection connection = dataSource.getConnection();
-			PreparedStatement selectGuestStatement = connection.prepareStatement(selectGuest);
-		) {
-			selectGuestStatement.setInt(1, guestId);
-
-			ResultSet results = selectGuestStatement.executeQuery();
-
-			List<String> messages = new ArrayList<>();
-			while (results.next()) {
-				messages.add(results.getString("text"));
-			}
-
-			return messages;
-		}
-	}
-	
 	void clearDatabase() throws SQLException {
 		String clearGuests = "DELETE FROM guest";
-		String clearMessages = "DELETE FROM message";
 		try (
 			Connection connection = dataSource.getConnection();
 			PreparedStatement clearGuestsStatement = connection.prepareStatement(clearGuests);
-			PreparedStatement clearMessagesStatement = connection.prepareStatement(clearMessages);
 		) {
 			connection.setAutoCommit(false);
-			clearMessagesStatement.executeUpdate();
 			clearGuestsStatement.executeUpdate();
 			connection.commit();
 		}

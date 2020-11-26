@@ -13,20 +13,15 @@ import java.time.Instant;
 class Guest {
 	private final Integer id;
 	private final String name;
-	private final String note;
+    private final String email;
+    private final String password;
+	private Instant lastVisit;
 
-	private int visits;
-	private Instant lastVisit; 
-
-	Guest(String name, String note) {
-		this(null, name, 0, note, Instant.now());
-	}
-	
-	Guest(Integer id, String name, int visits, String note, Instant lastVisit) {
+	Guest(Integer id, String name, String email, String password, Instant lastVisit) {
 		this.id = id;
-		this.name = name;
-		this.visits = visits;
-		this.note = note;
+        this.name = name;
+        this.email = email;
+        this.password = password;
 		this.lastVisit = lastVisit;
 	}
 	
@@ -38,25 +33,19 @@ class Guest {
 		return name;
 	}
 
-	int getVisits() {
-		return visits;
-	}
+	String getEmail() {
+        return email;
+    }
 
-	String getNote() {
-		return note;
-	}
+    String getPassword() {
+        return password;
+    }
 
 	Instant getLastVisit() {
 		return lastVisit;
 	}
 
 	void recordVisit() {
-		visits++;
 		lastVisit = Instant.now();
-	}
-	
-	String info() {
-		return name + " (" + note + ") has visited " + visits + " time(s). "
-				+ "Their last visit was at " + lastVisit + ".";  
 	}
 }

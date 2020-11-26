@@ -1,10 +1,12 @@
+# Database Files
+ehills_users/
+
 # Additional files students tend to commit (DO NOT REMOVE OR COMMENT THESE OUT)
 *.txt
 *.pdf
 *.doc
 *.docx
 *.zip
-example/
 
 # VS Code
 .vscode/

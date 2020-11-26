@@ -10,11 +10,17 @@ package finalproject.server;
 
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.SQLException;
 import java.util.Observable;
 
 import com.google.gson.Gson;
 
+import org.apache.derby.jdbc.EmbeddedConnectionPoolDataSource;
+import org.apache.derby.jdbc.EmbeddedDataSource;
+
 class Server extends Observable {
+
+    private static Database db;
 
     public static void main(String[] args) {
         Server server = new Server();
@@ -23,11 +29,27 @@ class Server extends Observable {
 
     private void runServer() {
         try {
+            setUpDatabase();
             setUpNetworking();
         } catch (Exception e) {
             e.printStackTrace();
             return;
         }
+    }
+
+    private void setUpDatabase() {
+        EmbeddedDataSource dataSource = new EmbeddedConnectionPoolDataSource();
+        dataSource.setDatabaseName("ehills_users");
+        dataSource.setCreateDatabase("create");
+        db = new Database(dataSource);
+
+        try {
+			db.initialize();
+			System.out.println("Database initialized successfully.");
+		} catch (SQLException sqle) {
+			System.out.println("Database initialization failed.");
+			sqle.printStackTrace();
+		}
     }
 
     private void setUpNetworking() throws Exception {

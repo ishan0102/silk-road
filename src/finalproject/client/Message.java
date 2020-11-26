@@ -8,7 +8,7 @@
 
 package finalproject.client;
 
-class Message {
+public class Message {
     String type;
     String input;
     int number;

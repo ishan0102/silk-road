@@ -6,8 +6,6 @@
  * Fall 2020
  */
 
-package finalproject.server;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

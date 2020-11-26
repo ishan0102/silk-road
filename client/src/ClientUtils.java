@@ -1,4 +1,4 @@
-package finalproject.client;
+
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

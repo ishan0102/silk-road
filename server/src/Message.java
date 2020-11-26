@@ -6,8 +6,6 @@
  * Fall 2020
  */
 
-package finalproject.server;
-
 class Message {
     String type;
     String input;

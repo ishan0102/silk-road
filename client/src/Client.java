@@ -6,8 +6,6 @@
  * Fall 2020
  */
 
-package finalproject.client;
-
 import java.util.Scanner;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

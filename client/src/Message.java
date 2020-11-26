@@ -6,8 +6,6 @@
  * Fall 2020
  */
 
-package finalproject.client;
-
 public class Message {
     enum Type {
         SIGNIN, SIGNUP

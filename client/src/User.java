@@ -6,8 +6,6 @@
  * Fall 2020
  */
 
-package finalproject.client;
-
 public class User {
     String name;
     String email;

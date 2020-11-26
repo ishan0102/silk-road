@@ -6,8 +6,6 @@
  * Fall 2020
  */
 
-package finalproject.server;
-
 import java.time.Instant;
 
 class Guest {

@@ -6,7 +6,6 @@
  * Fall 2020
  */
 
-import java.util.Scanner;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -56,7 +55,7 @@ public class Client extends Application {
     }
 
     public void sendToServer(Message message) {
-        GsonBuilder builder = new GsonBuilder().setPrettyPrinting();
+        GsonBuilder builder = new GsonBuilder();
         Gson gson = builder.create();
         System.out.println("Sending to server: " + message);
         toServer.println(gson.toJson(message));

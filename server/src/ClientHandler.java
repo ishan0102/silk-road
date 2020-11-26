@@ -12,10 +12,6 @@ import java.io.PrintWriter;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Observer;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import java.util.Observable;
 
 class ClientHandler implements Runnable, Observer {
@@ -44,11 +40,8 @@ class ClientHandler implements Runnable, Observer {
     @Override
     public void run() {
         String input;
-        GsonBuilder builder = new GsonBuilder().setPrettyPrinting();
-        Gson gson = builder.create();
         try {
             while ((input = fromClient.readLine()) != null) {
-                System.out.println("From client: " + gson.fromJson(input, Message.class));
                 server.processRequest(input);
             }
         } catch (IOException e) {

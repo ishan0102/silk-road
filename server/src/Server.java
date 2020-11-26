@@ -69,32 +69,32 @@ class Server extends Observable {
     }
 
     protected void processRequest(String input) {
-        String output = "Error";
         Gson gson = new Gson();
         Message message = gson.fromJson(input, Message.class);
-        try {
-            String temp = "";
-            switch (message.type) {
-                case "upper":
-                    temp = message.input.toUpperCase();
-                    break;
-                case "lower":
-                    temp = message.input.toLowerCase();
-                    break;
-                case "strip":
-                    temp = message.input.replace(" ", "");
-                    break;
-            }
-            output = "";
-            for (int i = 0; i < message.number; i++) {
-                output += temp;
-                output += " ";
-            }
-            this.setChanged();
-            this.notifyObservers(output);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        System.out.println(message);
+        // try {
+        //     String temp = "";
+        //     switch (message.type) {
+        //         case "upper":
+        //             temp = message.input.toUpperCase();
+        //             break;
+        //         case "lower":
+        //             temp = message.input.toLowerCase();
+        //             break;
+        //         case "strip":
+        //             temp = message.input.replace(" ", "");
+        //             break;
+        //     }
+        //     output = "";
+        //     for (int i = 0; i < message.number; i++) {
+        //         output += temp;
+        //         output += " ";
+        //     }
+        //     this.setChanged();
+        //     this.notifyObservers(output);
+        // } catch (Exception e) {
+        //     e.printStackTrace();
+        // }
     }
 
 }

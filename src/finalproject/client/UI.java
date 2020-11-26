@@ -15,6 +15,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
@@ -46,7 +47,6 @@ public class UI {
             }
         });
 
-
         Button signUp = new Button("Sign Up");
         signUp.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -54,12 +54,12 @@ public class UI {
                 signUp();
             }
         });
-        
+
         loginPane.add(signIn, 0, 0);
         GridPane.setHalignment(signIn, HPos.CENTER);
         loginPane.add(signUp, 0, 1);
         GridPane.setHalignment(signUp, HPos.CENTER);
-        
+
         Scene scene = new Scene(loginPane);
         stage.setWidth(325);
         stage.setHeight(375);
@@ -72,21 +72,29 @@ public class UI {
         GridPane signInPane = new GridPane();
         signInPane.setAlignment(Pos.CENTER);
         signInPane.setVgap(12);
+        signInPane.setHgap(5);
 
-        Text text = new Text("Sign In Window");
-
-        Button goBack = new Button("Go Back");
-        goBack.setOnAction(new EventHandler<ActionEvent>() {
+        Label emailLabel = new Label("Email");
+        TextField emailText = new TextField("");
+        Label passwordLabel = new Label("Password");
+        PasswordField passwordText = new PasswordField();
+        Button signInButton = new Button("Sign In");
+        Button goBackButton = new Button("Go Back");
+        goBackButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 login();
             }
         });
 
-        signInPane.add(text, 0, 0);
-        GridPane.setHalignment(text, HPos.CENTER);
-        signInPane.add(goBack, 0, 1);
-        GridPane.setHalignment(goBack, HPos.CENTER);
+        signInPane.add(emailLabel, 0, 0);
+        signInPane.add(emailText, 1, 0);
+        signInPane.add(passwordLabel, 0, 1);
+        signInPane.add(passwordText, 1, 1);
+        signInPane.add(signInButton, 1, 2);
+        GridPane.setHalignment(signInButton, HPos.RIGHT);
+        signInPane.add(goBackButton, 1, 3);
+        GridPane.setHalignment(goBackButton, HPos.RIGHT);
 
         Scene scene = new Scene(signInPane);
         stage.setWidth(325);
@@ -100,21 +108,33 @@ public class UI {
         GridPane signUpPane = new GridPane();
         signUpPane.setAlignment(Pos.CENTER);
         signUpPane.setVgap(12);
+        signUpPane.setHgap(5);
 
-        Text text = new Text("Sign Up Window");
-
-        Button goBack = new Button("Go Back");
-        goBack.setOnAction(new EventHandler<ActionEvent>() {
+        Label nameLabel = new Label("Name");
+        TextField nameText = new TextField("");
+        Label emailLabel = new Label("Email");
+        TextField emailText = new TextField("");
+        Label passwordLabel = new Label("Password");
+        PasswordField passwordText = new PasswordField();
+        Button signUpButton = new Button("Sign Up");
+        Button goBackButton = new Button("Go Back");
+        goBackButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 login();
             }
         });
-
-        signUpPane.add(text, 0, 0);
-        GridPane.setHalignment(text, HPos.CENTER);
-        signUpPane.add(goBack, 0, 1);
-        GridPane.setHalignment(goBack, HPos.CENTER);
+        
+        signUpPane.add(nameLabel, 0, 0);
+        signUpPane.add(nameText, 1, 0);
+        signUpPane.add(emailLabel, 0, 1);
+        signUpPane.add(emailText, 1, 1);
+        signUpPane.add(passwordLabel, 0, 2);
+        signUpPane.add(passwordText, 1, 2);
+        signUpPane.add(signUpButton, 1, 3);
+        GridPane.setHalignment(signUpButton, HPos.RIGHT);
+        signUpPane.add(goBackButton, 1, 4);
+        GridPane.setHalignment(goBackButton, HPos.RIGHT);
 
         Scene scene = new Scene(signUpPane);
         stage.setWidth(325);

@@ -29,6 +29,13 @@ public class Message {
 
     @Override
     public String toString() {
-        return "name: " + user.name + ", email: " + user.email + ", password: " + user.password;
+        switch (type) {
+            default:
+                return "no message";
+            case SIGNIN:
+                return "SIGNING IN! email: " + user.email + ", password: " + user.password;
+            case SIGNUP:
+                return "SIGNING UP! name: " + user.name + ", email: " + user.email + ", password: " + user.password;
+        }
     }
 }

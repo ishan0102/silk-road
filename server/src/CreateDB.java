@@ -12,7 +12,7 @@ public class CreateDB {
 
         try {
             db.initialize();
-            ServerUtils.initialize(db);
+            ServerUtils.initialize(db, dataSource);
 			System.out.println("Database initialized successfully.");
 		} catch (SQLException sqle) {
 			System.out.println("Database initialization failed.");

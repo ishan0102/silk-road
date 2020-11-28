@@ -28,7 +28,6 @@ class Server extends Observable {
     private void runServer() {
         try {
             setUpDatabase();
-            ServerUtils.initialize(db);
             setUpNetworking();
         } catch (Exception e) {
             e.printStackTrace();
@@ -41,7 +40,14 @@ class Server extends Observable {
         dataSource.setDatabaseName("ehills_users");
         dataSource.setCreateDatabase("create");
         db = new Database(dataSource);
+        ServerUtils.initialize(db, dataSource);
         System.out.println("Database initialized successfully.");
+
+        try {
+            ServerUtils.getGuestList();
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+        }
 
         /* try {
 			db.initialize();

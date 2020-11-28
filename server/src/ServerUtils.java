@@ -16,11 +16,19 @@ import java.util.HashMap;
 import javax.sql.DataSource;
 
 public class ServerUtils {
+    private static Server server;
     private static Database db;
     private static DataSource ds;
     public static HashMap<String, Integer> userEmails;
 
     public static void initialize(Database database, DataSource datasource) {
+        db = database;
+        ds = datasource;
+        userEmails = new HashMap<String, Integer>();
+    }
+
+    public static void initialize(Server s, Database database, DataSource datasource) {
+        server = s;
         db = database;
         ds = datasource;
         userEmails = new HashMap<String, Integer>();
@@ -36,12 +44,12 @@ public class ServerUtils {
             while (rs.next()) {
                 userEmails.putIfAbsent(rs.getString("email"), Integer.valueOf(rs.getString("id")));
 
-                System.out.println("id: " + rs.getString("id"));
-                System.out.println("name: " + rs.getString("name"));
-                System.out.println("email: " + rs.getString("email"));
-                System.out.println("password: " + rs.getString("password"));
-                System.out.println("last visit: " + rs.getString("last_visit"));
-                System.out.println();
+                // System.out.println("id: " + rs.getString("id"));
+                // System.out.println("name: " + rs.getString("name"));
+                // System.out.println("email: " + rs.getString("email"));
+                // System.out.println("password: " + rs.getString("password"));
+                // System.out.println("last visit: " + rs.getString("last_visit"));
+                // System.out.println();
             }
 		}
     }
@@ -50,11 +58,12 @@ public class ServerUtils {
         String selectGuest = "SELECT * FROM guest " +
                 "WHERE id = ?";
 
+        User user = new User(email);
         int id;
         if (!userEmails.containsKey(email)) {
-            System.out.println("no account with this email exists");
+            Message message = new Message(Message.ServerMessage.SIGNIN_STATUS, "No account with this email exists", user);
+            server.sendToClient(message);
             return;
-            // TODO: tell the user that no account with this email exists
         } else {
             id = userEmails.get(email);
         }
@@ -67,7 +76,11 @@ public class ServerUtils {
 			ResultSet results = signInStatement.executeQuery();
             results.next();
             if (email.equals(results.getString("email")) && password.equals(results.getString("password"))) {
-                System.out.println("successful log in");
+                Message message = new Message(Message.ServerMessage.SIGNIN_STATUS, "Login successful", user);
+                server.sendToClient(message);
+            } else {
+                Message message = new Message(Message.ServerMessage.SIGNIN_STATUS, "Incorrect password", user);
+                server.sendToClient(message);
             }
 		} catch (SQLException e) {
             e.printStackTrace();
@@ -75,16 +88,20 @@ public class ServerUtils {
     }
 
     public static void signUp(String name, String email, String password) {
+        User user = new User(email);
+        
         if (userEmails.containsKey(email)) {
-            System.out.println("email already in use");
+            Message message = new Message(Message.ServerMessage.SIGNUP_STATUS, "An account with this email already exists", user);
+            server.sendToClient(message);
             return;
-            // TODO: tell the client that this email is already in use
         }
         Guest guest = new Guest(name, email, password);
         int id;
         try {
             id = db.insertGuest(guest);
             userEmails.putIfAbsent(email, id);
+            Message message = new Message(Message.ServerMessage.SIGNUP_STATUS, "Login successful", user);
+            server.sendToClient(message);
         } catch (SQLException sqle) {
             sqle.printStackTrace();
         }

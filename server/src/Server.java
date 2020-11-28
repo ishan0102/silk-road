@@ -18,10 +18,11 @@ import org.apache.derby.jdbc.EmbeddedDataSource;
 
 class Server extends Observable {
 
+    private static Server server;
     private static Database db;
 
     public static void main(String[] args) {
-        Server server = new Server();
+        server = new Server();
         server.runServer();
     }
 
@@ -40,16 +41,16 @@ class Server extends Observable {
         dataSource.setDatabaseName("ehills_users");
         dataSource.setCreateDatabase("create");
         db = new Database(dataSource);
-        ServerUtils.initialize(db, dataSource);
+        ServerUtils.initialize(server, db, dataSource);
         System.out.println("Database initialized successfully.");
 
-        // testing local database
-        // try {
-        //     ServerUtils.getGuestList();
-        // } catch (SQLException sqle) {
-        //     sqle.printStackTrace();
-        // }
-        // System.out.println(ServerUtils.userEmails);
+        // Initialize local data structure for users
+        try {
+            ServerUtils.getGuestList();
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+        }
+        System.out.println(ServerUtils.userEmails);
     }
 
     private void setUpNetworking() throws Exception {
@@ -72,7 +73,7 @@ class Server extends Observable {
         User user = message.getUser();
 
         try {
-            switch (message.getType()) {
+            switch (message.getClientMessageType()) {
                 case SIGNIN:
                     System.out.println("attempting sign in");
                     ServerUtils.signIn(user.email, user.password);
@@ -82,12 +83,13 @@ class Server extends Observable {
                     ServerUtils.signUp(user.name, user.email, user.password);
                     break;
             }
-            
-            this.setChanged();
-            this.notifyObservers();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    public void sendToClient(Message message) {
+        this.setChanged();
+        this.notifyObservers(message);
+    }
 }

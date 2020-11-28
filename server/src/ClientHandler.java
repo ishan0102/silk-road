@@ -12,6 +12,10 @@ import java.io.PrintWriter;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Observer;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.util.Observable;
 
 class ClientHandler implements Runnable, Observer {
@@ -31,9 +35,11 @@ class ClientHandler implements Runnable, Observer {
         }
     }
 
-    protected void sendToClient(String string) {
-        System.out.println("Sending to client: " + string);
-        toClient.println(string);
+    protected void sendToClient(Message message) {
+        GsonBuilder builder = new GsonBuilder();
+        Gson gson = builder.create();
+        System.out.println("Sending to server: " + message);
+        toClient.println(gson.toJson(message));
         toClient.flush();
     }
 
@@ -51,6 +57,6 @@ class ClientHandler implements Runnable, Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        this.sendToClient((String) arg);
+        this.sendToClient((Message) arg);
     }
 }

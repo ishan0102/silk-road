@@ -22,6 +22,7 @@ import javafx.stage.Stage;
 public class UI {
     private Stage stage;
     private Client client;
+    public static String serverMessage;
 
     public UI(Client client, Stage stage) {
         this.stage = stage;
@@ -77,15 +78,30 @@ public class UI {
         TextField emailText = new TextField("");
         Label passwordLabel = new Label("Password");
         PasswordField passwordText = new PasswordField();
-        Label signInMessage = new Label("password blah blah");
         
         Button signInButton = new Button("Sign In");
         signInButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 User user = new User(emailText.getText(), passwordText.getText());
-                Message message = new Message(Message.Type.SIGNIN, user);
+                Message message = new Message(Message.ClientMessage.SIGNIN, user);
+                User.currentUser = user;
                 client.sendToServer(message);
+                
+                try { // TODO: get rid of thread sleep and figure out how to do this properly
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                Label signInMessage = new Label(serverMessage);
+                System.out.println(serverMessage);
+                signInPane.add(signInMessage, 0, 5);
+                GridPane.setHalignment(signInMessage, HPos.CENTER);
+
+                if (serverMessage.equals("Login successful")) {
+                    bidding();
+                }
             }
         });
 
@@ -111,8 +127,6 @@ public class UI {
         GridPane.setHalignment(signInButton, HPos.RIGHT);
         signInPane.add(goBackButton, 0, 4);
         GridPane.setHalignment(goBackButton, HPos.LEFT);
-        signInPane.add(signInMessage, 0, 5);
-        GridPane.setHalignment(signInMessage, HPos.CENTER);
 
         Scene scene = new Scene(signInPane);
         stage.setWidth(325);
@@ -134,15 +148,30 @@ public class UI {
         TextField emailText = new TextField("");
         Label passwordLabel = new Label("Password");
         PasswordField passwordText = new PasswordField();
-        Label signUpMessage = new Label("password blah blah");
 
         Button signUpButton = new Button("Sign Up");
         signUpButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 User user = new User(nameText.getText(), emailText.getText(), passwordText.getText());
-                Message message = new Message(Message.Type.SIGNUP, user);
+                Message message = new Message(Message.ClientMessage.SIGNUP, user);
+                User.currentUser = user;
                 client.sendToServer(message);
+
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                Label signUpMessage = new Label(serverMessage);
+                System.out.println(serverMessage);
+                signUpPane.add(signUpMessage, 0, 7);
+                GridPane.setHalignment(signUpMessage, HPos.CENTER);
+
+                if (serverMessage.equals("Login successful")) {
+                    bidding();
+                }
             }
         });
 
@@ -170,12 +199,29 @@ public class UI {
         GridPane.setHalignment(signUpButton, HPos.RIGHT);
         signUpPane.add(goBackButton, 0, 6);
         GridPane.setHalignment(goBackButton, HPos.LEFT);
-        signUpPane.add(signUpMessage, 0, 7);
-        GridPane.setHalignment(signUpMessage, HPos.CENTER);
 
         Scene scene = new Scene(signUpPane);
         stage.setWidth(325);
         stage.setHeight(375);
+        stage.centerOnScreen();
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    public void bidding() {
+        GridPane biddingPane = new GridPane();
+        biddingPane.getChildren().clear();
+        biddingPane.setAlignment(Pos.CENTER);
+        biddingPane.setVgap(10);
+        biddingPane.setHgap(5);
+
+        
+
+    
+
+        Scene scene = new Scene(biddingPane);
+        stage.setWidth(800);
+        stage.setHeight(600);
         stage.centerOnScreen();
         stage.setScene(scene);
         stage.show();

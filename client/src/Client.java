@@ -21,6 +21,7 @@ public class Client extends Application {
     private static String host = "127.0.0.1";
     private BufferedReader fromServer;
     private PrintWriter toServer;
+    private UI gui;
 
     public static void main(String[] args) {
         launch(args);
@@ -51,7 +52,25 @@ public class Client extends Application {
     }
 
     protected void processRequest(String input) {
-        return;
+        Gson gson = new Gson();
+        Message message = gson.fromJson(input, Message.class);
+        User user = message.getUser();
+        if (!user.email.equals(User.currentUser.email)) {
+            return;
+        }
+
+        try {
+            switch (message.getServerMessageType()) {
+                case SIGNIN_STATUS:
+                    UI.serverMessage = message.getStatus();
+                    break;
+                case SIGNUP_STATUS:
+                    UI.serverMessage = message.getStatus();
+                    break;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void sendToServer(Message message) {
@@ -70,7 +89,7 @@ public class Client extends Application {
             e.printStackTrace();
         }
 
-        UI gui = new UI(this, primaryStage);
+        gui = new UI(this, primaryStage);
         gui.startGUI();
     }
 

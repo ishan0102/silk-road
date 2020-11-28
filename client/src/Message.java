@@ -7,29 +7,51 @@
  */
 
 public class Message {
-    public enum Type {
-        SIGNIN, SIGNUP
+    public enum ClientMessage {
+        SIGNIN, 
+        SIGNUP
     }
 
-    private Type type;
-    private User user;
+    public enum ServerMessage {
+        SIGNIN_STATUS, 
+        SIGNUP_STATUS
+    }
 
-    public Message(Type type, User user) {
-        this.type = type;
+    private ClientMessage clientMessageType;
+    private ServerMessage serverMessageType;
+    private User user;
+    private String status;
+
+    public Message(ClientMessage clientMessageType, User user) {
+        this.clientMessageType = clientMessageType;
         this.user = user;
     }
 
-    public Type getType() {
-        return type;
+    public Message(ServerMessage serverMessageType, String status, User user) {
+        this.serverMessageType = serverMessageType;
+        this.status = status;
+        this.user = user;
+    }
+
+    public ClientMessage getClientMessageType() {
+        return clientMessageType;
+    }
+
+    public ServerMessage getServerMessageType() {
+        return serverMessageType;
     }
 
     public User getUser() {
         return user;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
     @Override
     public String toString() {
-        switch (type) {
+        switch (clientMessageType) {
             default:
                 return "no message";
             case SIGNIN:

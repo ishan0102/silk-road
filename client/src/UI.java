@@ -77,6 +77,15 @@ public class UI {
         Label passwordLabel = new Label("Password");
         PasswordField passwordText = new PasswordField();
         Button signInButton = new Button("Sign In");
+        signInButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                User user = new User(emailText.getText(), passwordText.getText());
+                Message message = new Message(Message.Type.SIGNIN, user);
+                client.sendToServer(message);
+            }
+        });
+
         Button goBackButton = new Button("Go Back");
         goBackButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -119,7 +128,7 @@ public class UI {
             @Override
             public void handle(ActionEvent event) {
                 User user = new User(nameText.getText(), emailText.getText(), passwordText.getText());
-                Message message = new Message(Message.Type.SIGNIN, user);
+                Message message = new Message(Message.Type.SIGNUP, user);
                 client.sendToServer(message);
             }
         });

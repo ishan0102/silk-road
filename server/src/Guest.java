@@ -15,6 +15,14 @@ class Guest {
     private final String password;
 	private Instant lastVisit;
 
+    Guest(String name, String email, String password) {
+        this.id = null;
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.lastVisit = Instant.now();
+	}
+
 	Guest(Integer id, String name, String email, String password, Instant lastVisit) {
 		this.id = id;
         this.name = name;
@@ -45,5 +53,10 @@ class Guest {
 
 	void recordVisit() {
 		lastVisit = Instant.now();
-	}
+    }
+    
+    @Override
+    public String toString() {
+        return "id: " + id + ", name: " + name + ", email: " + email + ", password: " + password + ", lastVisit: " + lastVisit;
+    }
 }

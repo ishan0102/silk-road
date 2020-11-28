@@ -92,9 +92,7 @@ class Database {
 			PreparedStatement selectGuestStatement = connection.prepareStatement(selectGuest);
 		) {
 			selectGuestStatement.setInt(1, id);
-
 			ResultSet results = selectGuestStatement.executeQuery();
-
 			return readGuestResultSet(results).get(0);
 		}
 	}

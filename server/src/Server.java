@@ -28,6 +28,7 @@ class Server extends Observable {
     private void runServer() {
         try {
             setUpDatabase();
+            ServerUtils.initialize(db);
             setUpNetworking();
         } catch (Exception e) {
             e.printStackTrace();
@@ -40,18 +41,19 @@ class Server extends Observable {
         dataSource.setDatabaseName("ehills_users");
         dataSource.setCreateDatabase("create");
         db = new Database(dataSource);
+        System.out.println("Database initialized successfully.");
 
-        try {
+        /* try {
 			db.initialize();
 			System.out.println("Database initialized successfully.");
 		} catch (SQLException sqle) {
             if (sqle.getSQLState().equals("X0Y32")) {
-                System.out.println("Database already exists");
+                System.out.println("Database already exists.");
                 return;
             }
 			System.out.println("Database initialization failed.");
 			sqle.printStackTrace();
-		}
+		} */
     }
 
     private void setUpNetworking() throws Exception {
@@ -71,30 +73,23 @@ class Server extends Observable {
     protected void processRequest(String input) {
         Gson gson = new Gson();
         Message message = gson.fromJson(input, Message.class);
-        System.out.println(message);
-        // try {
-        //     String temp = "";
-        //     switch (message.type) {
-        //         case "upper":
-        //             temp = message.input.toUpperCase();
-        //             break;
-        //         case "lower":
-        //             temp = message.input.toLowerCase();
-        //             break;
-        //         case "strip":
-        //             temp = message.input.replace(" ", "");
-        //             break;
-        //     }
-        //     output = "";
-        //     for (int i = 0; i < message.number; i++) {
-        //         output += temp;
-        //         output += " ";
-        //     }
-        //     this.setChanged();
-        //     this.notifyObservers(output);
-        // } catch (Exception e) {
-        //     e.printStackTrace();
-        // }
+        User user = message.getUser();
+
+        try {
+            switch (message.getType()) {
+                case SIGNIN:
+                    break;
+                case SIGNUP:
+                    System.out.println("attempting sign up");
+                    ServerUtils.signUp(user.name, user.email, user.password);
+                    break;
+            }
+            
+            this.setChanged();
+            this.notifyObservers();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

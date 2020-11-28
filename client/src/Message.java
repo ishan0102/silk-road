@@ -7,7 +7,7 @@
  */
 
 public class Message {
-    enum Type {
+    public enum Type {
         SIGNIN, SIGNUP
     }
 
@@ -19,8 +19,16 @@ public class Message {
         this.user = user;
     }
 
+    public Type getType() {
+        return type;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
     @Override
     public String toString() {
-        return "name: " + user.name + " - email: " + user.email + " - password: " + user.password;
+        return "name: " + user.name + ", email: " + user.email + ", password: " + user.password;
     }
 }

@@ -17,6 +17,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 public class UI {
@@ -95,6 +96,7 @@ public class UI {
                 }
 
                 Label signInMessage = new Label(serverMessage);
+                signInMessage.setTextFill(Color.rgb(255, 0, 0));
                 System.out.println(serverMessage);
                 signInPane.add(signInMessage, 0, 5);
                 GridPane.setHalignment(signInMessage, HPos.CENTER);
@@ -165,6 +167,7 @@ public class UI {
                 }
 
                 Label signUpMessage = new Label(serverMessage);
+                signUpMessage.setTextFill(Color.rgb(255, 0, 0));
                 System.out.println(serverMessage);
                 signUpPane.add(signUpMessage, 0, 7);
                 GridPane.setHalignment(signUpMessage, HPos.CENTER);

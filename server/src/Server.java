@@ -43,23 +43,13 @@ class Server extends Observable {
         ServerUtils.initialize(db, dataSource);
         System.out.println("Database initialized successfully.");
 
-        try {
-            ServerUtils.getGuestList();
-        } catch (SQLException sqle) {
-            sqle.printStackTrace();
-        }
-
-        /* try {
-			db.initialize();
-			System.out.println("Database initialized successfully.");
-		} catch (SQLException sqle) {
-            if (sqle.getSQLState().equals("X0Y32")) {
-                System.out.println("Database already exists.");
-                return;
-            }
-			System.out.println("Database initialization failed.");
-			sqle.printStackTrace();
-		} */
+        // testing local database
+        // try {
+        //     ServerUtils.getGuestList();
+        // } catch (SQLException sqle) {
+        //     sqle.printStackTrace();
+        // }
+        // System.out.println(ServerUtils.userEmails);
     }
 
     private void setUpNetworking() throws Exception {
@@ -84,6 +74,8 @@ class Server extends Observable {
         try {
             switch (message.getType()) {
                 case SIGNIN:
+                    System.out.println("attempting sign in");
+                    ServerUtils.signIn(user.email, user.password);
                     break;
                 case SIGNUP:
                     System.out.println("attempting sign up");

@@ -12,7 +12,6 @@ import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import Message.ClientMessage;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
@@ -311,6 +310,9 @@ public class UI {
                 addItemMessage.setTextFill(Color.rgb(0, 100, 0));
                 addItemPane.add(addItemMessage, 0, 9);
                 GridPane.setHalignment(addItemMessage, HPos.CENTER);
+
+                Tab itemTab = addItemTab(item);
+                tabPane.getTabs().add(itemTab);
             }
         });
 
@@ -339,27 +341,10 @@ public class UI {
         waitForResponse();
         ArrayList<Item> items = Item.itemInfo;
         for (Item item : items) {
-            Tab itemTab = new Tab(item.getName(), new Label(item.getDescription()));
-            GridPane itemPane = new GridPane();
-            itemPane.getChildren().clear();
-            itemPane.setAlignment(Pos.CENTER);
-            itemPane.setVgap(10);
-            itemPane.setHgap(5);
-
-            Label name = new Label("Item Name: " + item.getName());
-            Label description = new Label("Description: " + item.getDescription());
-            Label bidPrice = new Label("Starting Bid Price: $" + item.getBidPrice() + "0");
-            Label buyPrice = new Label("Automatic Buy Price: $" + item.getBuyPrice() + "0");
-
-            itemPane.add(name, 0, 0);
-            itemPane.add(description, 0, 1);
-            itemPane.add(bidPrice, 0, 2);
-            itemPane.add(buyPrice, 0, 3);
-            
-            itemTab.setContent(itemPane);
+            Tab itemTab = addItemTab(item);
             tabPane.getTabs().add(itemTab);
         }
-
+ 
 
         Scene scene = new Scene(tabPane);
         stage.setWidth(800);
@@ -367,6 +352,28 @@ public class UI {
         stage.centerOnScreen();
         stage.setScene(scene);
         stage.show();
+    }
+
+    public Tab addItemTab(Item item) {
+        Tab itemTab = new Tab(item.getName(), new Label(item.getDescription()));
+        GridPane itemPane = new GridPane();
+        itemPane.getChildren().clear();
+        itemPane.setAlignment(Pos.CENTER);
+        itemPane.setVgap(10);
+        itemPane.setHgap(5);
+
+        Label name = new Label("Item Name: " + item.getName());
+        Label description = new Label("Description: " + item.getDescription());
+        Label bidPrice = new Label("Starting Bid Price: $" + item.getBidPrice() + "0");
+        Label buyPrice = new Label("Automatic Buy Price: $" + item.getBuyPrice() + "0");
+
+        itemPane.add(name, 0, 0);
+        itemPane.add(description, 0, 1);
+        itemPane.add(bidPrice, 0, 2);
+        itemPane.add(buyPrice, 0, 3);
+        itemTab.setContent(itemPane);
+
+        return itemTab;
     }
 
 }

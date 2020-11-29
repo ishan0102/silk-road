@@ -129,11 +129,15 @@ public class ServerUtils {
             User user = new User(creatorEmail);
             Message message = new Message(Message.ServerMessage.ADD_ITEM_STATUS, "Item added successfully!", user);
             server.sendToClient(message);
+            updateClientBidding();
         } catch (SQLException sqle) {
             sqle.printStackTrace();
+        } catch (NullPointerException npe) {
+            System.out.println("NullPointerException, this should only show up if you run CreateDB.java");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        updateClientBidding();
     }
 
     public static void updateClientBidding() {

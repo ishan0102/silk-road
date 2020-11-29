@@ -1,3 +1,5 @@
+import java.time.Instant;
+
 /*
  * EE422C Final Project submission by
  * Ishan Shah
@@ -10,6 +12,7 @@ public class User {
     String name;
     String email;
     String password;
+    Instant lastVisit;
 
     // Used to compare server responses with the corresponding client
     public User(String email) {
@@ -30,5 +33,13 @@ public class User {
         this.name = name;
         this.email = email;
         this.password = password;
+    }
+
+    // Used when sending server information back to client
+    public User(String name, String email, String password, Instant lastVisit) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.lastVisit = lastVisit;
     }
 }

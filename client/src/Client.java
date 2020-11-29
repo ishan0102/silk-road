@@ -60,6 +60,7 @@ public class Client extends Application {
         if (!user.email.equals(User.currentUser.email)) {
             return;
         }
+        User.currentUser = user;
 
         try {
             switch (message.getServerMessageType()) {
@@ -96,5 +97,4 @@ public class Client extends Application {
         gui = new UI(this, primaryStage);
         gui.startGUI();
     }
-
 }

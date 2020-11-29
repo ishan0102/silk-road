@@ -6,6 +6,13 @@
  * Fall 2020
  */
 
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.util.Locale;
+
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
@@ -79,7 +86,7 @@ public class UI {
         TextField emailText = new TextField("");
         Label passwordLabel = new Label("Password");
         PasswordField passwordText = new PasswordField();
-        
+
         Button signInButton = new Button("Sign In");
         signInButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -88,7 +95,7 @@ public class UI {
                 Message message = new Message(Message.ClientMessage.SIGNIN, user);
                 User.currentUser = user;
                 client.sendToServer(message);
-                
+
                 while (!Client.messageReceived) {
                     try {
                         Thread.sleep(10);
@@ -105,7 +112,7 @@ public class UI {
                 GridPane.setHalignment(signInMessage, HPos.CENTER);
 
                 if (serverMessage.equals("Login successful")) {
-                    bidding();
+                    biddingScreen();
                 }
             }
         });
@@ -179,7 +186,7 @@ public class UI {
                 GridPane.setHalignment(signUpMessage, HPos.CENTER);
 
                 if (serverMessage.equals("Login successful")) {
-                    bidding();
+                    biddingScreen();
                 }
             }
         });
@@ -217,20 +224,28 @@ public class UI {
         stage.show();
     }
 
-    public void bidding() {
-        GridPane biddingPane = new GridPane();
-        biddingPane.getChildren().clear();
-        biddingPane.setAlignment(Pos.CENTER);
-        biddingPane.setVgap(10);
-        biddingPane.setHgap(5);
+    public void biddingScreen() {
+        GridPane biddingScreenPane = new GridPane();
+        biddingScreenPane.getChildren().clear();
+        biddingScreenPane.setAlignment(Pos.CENTER);
+        biddingScreenPane.setVgap(10);
+        biddingScreenPane.setHgap(5);
 
-        
+        User user = User.currentUser;
 
+        DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
+                     .withLocale( Locale.US )
+                     .withZone( ZoneId.systemDefault() );
+        String datetime = formatter.format(user.lastVisit);
+        Label welcome = new Label("Welcome to eHills " + user.name + "! Your last visit was on" + datetime);
+
+
+        biddingScreenPane.add(welcome, 0, 0);
     
 
-        Scene scene = new Scene(biddingPane);
-        stage.setWidth(800);
-        stage.setHeight(600);
+        Scene scene = new Scene(biddingScreenPane);
+        stage.setWidth(1000);
+        stage.setHeight(750);
         stage.centerOnScreen();
         stage.setScene(scene);
         stage.show();

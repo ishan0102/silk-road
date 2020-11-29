@@ -44,6 +44,7 @@ public class ServerUtils {
             while (rs.next()) {
                 userEmails.putIfAbsent(rs.getString("email"), Integer.valueOf(rs.getString("id")));
 
+                // Prints out database
                 // System.out.println("id: " + rs.getString("id"));
                 // System.out.println("name: " + rs.getString("name"));
                 // System.out.println("email: " + rs.getString("email"));
@@ -76,6 +77,9 @@ public class ServerUtils {
 			ResultSet results = signInStatement.executeQuery();
             results.next();
             if (email.equals(results.getString("email")) && password.equals(results.getString("password"))) {
+                user = new User(results.getString("name"), results.getString("email"), results.getString("password"),
+                    results.getTimestamp("last_visit").toInstant());
+                
                 Message message = new Message(Message.ServerMessage.SIGNIN_STATUS, "Login successful", user);
                 server.sendToClient(message);
             } else {
@@ -100,11 +104,12 @@ public class ServerUtils {
         try {
             id = db.insertGuest(guest);
             userEmails.putIfAbsent(email, id);
+            user = new User(name, email, password, Instant.now());
             Message message = new Message(Message.ServerMessage.SIGNUP_STATUS, "Login successful", user);
             server.sendToClient(message);
         } catch (SQLException sqle) {
             sqle.printStackTrace();
-        } catch (Exception e) {
+        } catch (NullPointerException npe) {
             System.out.println("NullPointerException, this should only show up if you run CreateDB.java");
         }
     }

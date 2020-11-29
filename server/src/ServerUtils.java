@@ -10,7 +10,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.Instant;
 import java.util.HashMap;
 
 import javax.sql.DataSource;
@@ -56,9 +55,6 @@ public class ServerUtils {
     }
 
     public static void signIn(String email, String password) {
-        String selectGuest = "SELECT * FROM guest " +
-                "WHERE id = ?";
-
         User user = new User(email);
         int id;
         if (!userEmails.containsKey(email)) {
@@ -69,25 +65,20 @@ public class ServerUtils {
             id = userEmails.get(email);
         }
 
-        try (
-			Connection connection = ds.getConnection();
-			PreparedStatement signInStatement = connection.prepareStatement(selectGuest);
-		) {
-			signInStatement.setInt(1, id);
-			ResultSet results = signInStatement.executeQuery();
-            results.next();
-            if (email.equals(results.getString("email")) && password.equals(results.getString("password"))) {
-                user = new User(results.getString("name"), results.getString("email"), results.getString("password"),
-                    results.getTimestamp("last_visit").toInstant());
-                
-                Message message = new Message(Message.ServerMessage.SIGNIN_STATUS, "Login successful", user);
-                server.sendToClient(message);
+        try {
+            Guest guest = db.getGuest(id);
+            Message message;
+            if (email.equals(guest.getEmail()) && password.equals(guest.getPassword())) {
+                user = new User(guest.getName(), guest.getEmail(), guest.getPassword(), guest.getLastVisit());
+                guest.recordVisit();
+                db.updateGuest(guest);
+                message = new Message(Message.ServerMessage.SIGNIN_STATUS, "Login successful", user);
             } else {
-                Message message = new Message(Message.ServerMessage.SIGNIN_STATUS, "Incorrect password", user);
-                server.sendToClient(message);
+                message = new Message(Message.ServerMessage.SIGNIN_STATUS, "Incorrect password", user);
             }
-		} catch (SQLException e) {
-            e.printStackTrace();
+            server.sendToClient(message);
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
         }
     }
 
@@ -102,9 +93,10 @@ public class ServerUtils {
         Guest guest = new Guest(name, email, password);
         int id;
         try {
+            guest.recordVisit();
             id = db.insertGuest(guest);
             userEmails.putIfAbsent(email, id);
-            user = new User(name, email, password, Instant.now());
+            user = new User(name, email, password, guest.getLastVisit());
             Message message = new Message(Message.ServerMessage.SIGNUP_STATUS, "Login successful", user);
             server.sendToClient(message);
         } catch (SQLException sqle) {

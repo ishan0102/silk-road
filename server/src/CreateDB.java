@@ -25,16 +25,6 @@ public class CreateDB {
             System.out.println("Database already exists.");
         }
         ServerUtils.initialize(db, dataSource);
-
-        // try {
-        //     db.initialize();
-        //     ServerUtils.initialize(db, dataSource);
-		// 	System.out.println("Database initialized successfully.");
-		// } catch (SQLException sqle) {
-		// 	System.out.println("Database initialization failed.");
-		// 	sqle.printStackTrace();
-        // }
-
         ServerUtils.signUp("Ishan Shah", "ishan0102@utexas.edu", "password");
         ServerUtils.signUp("Michael Chen", "user@utexas.edu", "password");
         ServerUtils.signUp("Yang Zhang", "user2@utexas.edu", "password");

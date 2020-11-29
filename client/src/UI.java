@@ -237,7 +237,9 @@ public class UI {
                      .withLocale( Locale.US )
                      .withZone( ZoneId.systemDefault() );
         String datetime = formatter.format(user.lastVisit);
-        Label welcome = new Label("Welcome to eHills " + user.name + "! Your last visit was on" + datetime);
+        String[] dt = datetime.split(" ");
+        Label welcome = new Label("Welcome to eHills " + user.name + 
+                    "! Your last visit was on " + dt[0] + " at " + dt[1] + " " + dt[2] + ".");
 
 
         biddingScreenPane.add(welcome, 0, 0);

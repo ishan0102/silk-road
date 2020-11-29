@@ -8,6 +8,8 @@
 
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.Observable;
 
@@ -41,8 +43,19 @@ class Server extends Observable {
         dataSource.setDatabaseName("ehills_users");
         dataSource.setCreateDatabase("create");
         db = new Database(dataSource);
+        if (!Files.isDirectory(Paths.get(System.getProperty("user.dir") + "/" + "ehills_users"))) {
+            System.out.println("No database found, creating a new database.");
+            try {
+                db.initialize();
+                System.out.println("Database initialized successfully.");
+            } catch (SQLException sqle) {
+                System.out.println("Database initialization failed.");
+                sqle.printStackTrace();
+            }
+        } else {
+            System.out.println("Database already exists.");
+        }
         ServerUtils.initialize(server, db, dataSource);
-        System.out.println("Database initialized successfully.");
 
         // Initialize local data structure for users
         try {

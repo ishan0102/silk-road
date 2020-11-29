@@ -1,3 +1,5 @@
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 
 import org.apache.derby.jdbc.EmbeddedConnectionPoolDataSource;
@@ -10,14 +12,28 @@ public class CreateDB {
         dataSource.setCreateDatabase("create");
         Database db = new Database(dataSource);
 
-        try {
-            db.initialize();
-            ServerUtils.initialize(db, dataSource);
-			System.out.println("Database initialized successfully.");
-		} catch (SQLException sqle) {
-			System.out.println("Database initialization failed.");
-			sqle.printStackTrace();
+        if (!Files.isDirectory(Paths.get(System.getProperty("user.dir") + "/" + "ehills_users"))) {
+            System.out.println("No database found, creating a new database.");
+            try {
+                db.initialize();
+                System.out.println("Database initialized successfully.");
+            } catch (SQLException sqle) {
+                System.out.println("Database initialization failed.");
+                sqle.printStackTrace();
+            }
+        } else {
+            System.out.println("Database already exists.");
         }
+        ServerUtils.initialize(db, dataSource);
+
+        // try {
+        //     db.initialize();
+        //     ServerUtils.initialize(db, dataSource);
+		// 	System.out.println("Database initialized successfully.");
+		// } catch (SQLException sqle) {
+		// 	System.out.println("Database initialization failed.");
+		// 	sqle.printStackTrace();
+        // }
 
         ServerUtils.signUp("Ishan Shah", "ishan0102@utexas.edu", "password");
         ServerUtils.signUp("Michael Chen", "user@utexas.edu", "password");

@@ -10,6 +10,8 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -57,10 +59,13 @@ public class Client extends Application {
         Gson gson = new Gson();
         Message message = gson.fromJson(input, Message.class);
         User user = message.getUser();
-        if (!user.email.equals(User.currentUser.email)) {
+        ArrayList<Item> itemInfo = message.getItemInfo();
+        if (!user.email.equals("ALL CLIENTS") && !user.email.equals(User.currentUser.email)) {
             return;
         }
-        User.currentUser = user;
+        if (!user.email.equals("ALL CLIENTS")) {
+            User.currentUser = user;
+        }
 
         try {
             switch (message.getServerMessageType()) {
@@ -73,9 +78,15 @@ public class Client extends Application {
                     Client.messageReceived = true;
                     break;
                 case ADD_ITEM_STATUS:
+                    Item.itemInfo = itemInfo;
                     UI.serverMessage = message.getStatus();
                     Client.messageReceived = true;
                     break;
+                case SEND_ITEM_INFO:
+                    Item.itemInfo = itemInfo;
+                    Client.messageReceived = true;
+                    break;
+
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 /*
  * EE422C Final Project submission by
  * Ishan Shah
@@ -10,13 +12,15 @@ public class Message {
     public enum ClientMessage {
         SIGNIN, 
         SIGNUP,
-        ADD_ITEM
+        ADD_ITEM,
+        GET_ITEM_INFO
     }
 
     public enum ServerMessage {
         SIGNIN_STATUS, 
         SIGNUP_STATUS,
-        ADD_ITEM_STATUS
+        ADD_ITEM_STATUS,
+        SEND_ITEM_INFO
     }
 
     private ClientMessage clientMessageType;
@@ -24,6 +28,7 @@ public class Message {
     private User user;
     private String status;
     private Item item;
+    private ArrayList<Item> itemInfo;
 
     public Message(ClientMessage clientMessageType, User user) {
         this.clientMessageType = clientMessageType;
@@ -39,6 +44,15 @@ public class Message {
     public Message(ClientMessage clientMessageType, Item item) {
         this.clientMessageType = clientMessageType;
         this.item = item;
+    }
+
+    public Message(ClientMessage clientMessageType) {
+        this.clientMessageType = clientMessageType;
+    }
+
+    public Message(ServerMessage serverMessageType, ArrayList<Item> itemInfo) {
+        this.serverMessageType = serverMessageType;
+        this.itemInfo = itemInfo;
     }
 
     public ClientMessage getClientMessageType() {
@@ -59,6 +73,10 @@ public class Message {
 
     public Item getItem() {
         return item;
+    }
+
+    public ArrayList<Item> getItemInfo() {
+        return itemInfo;
     }
 
     @Override

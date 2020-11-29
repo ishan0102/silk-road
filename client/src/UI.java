@@ -9,8 +9,10 @@
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.util.ArrayList;
 import java.util.Locale;
 
+import Message.ClientMessage;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
@@ -42,6 +44,17 @@ public class UI {
     public void startGUI() {
         stage.setTitle("eHills");
         login();
+    }
+
+    public void waitForResponse() {
+        while (!Client.messageReceived) {
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        Client.messageReceived = false;
     }
 
     public void login() {
@@ -97,15 +110,7 @@ public class UI {
                 Message message = new Message(Message.ClientMessage.SIGNIN, user);
                 User.currentUser = user;
                 client.sendToServer(message);
-
-                while (!Client.messageReceived) {
-                    try {
-                        Thread.sleep(10);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-                Client.messageReceived = false;
+                waitForResponse();
 
                 Label signInMessage = new Label(serverMessage);
                 signInMessage.setTextFill(Color.rgb(220, 20, 60));
@@ -170,15 +175,7 @@ public class UI {
                 Message message = new Message(Message.ClientMessage.SIGNUP, user);
                 User.currentUser = user;
                 client.sendToServer(message);
-
-                while (!Client.messageReceived) {
-                    try {
-                        Thread.sleep(10);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-                Client.messageReceived = false;
+                waitForResponse();
 
                 Label signUpMessage = new Label(serverMessage);
                 signUpMessage.setTextFill(Color.rgb(220, 20, 60));
@@ -306,19 +303,14 @@ public class UI {
                 addBidText.clear();
                 addBuyText.clear();
 
-                while (!Client.messageReceived) {
-                    try {
-                        Thread.sleep(10);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-                Client.messageReceived = false;
+                waitForResponse();
 
-                Label signUpMessage = new Label(serverMessage);
-                signUpMessage.setTextFill(Color.rgb(0, 100, 0));
-                addItemPane.add(signUpMessage, 0, 9);
-                GridPane.setHalignment(signUpMessage, HPos.CENTER);
+                Label addItemMessage = new Label();
+                addItemMessage.setText("");
+                addItemMessage.setText(serverMessage);
+                addItemMessage.setTextFill(Color.rgb(0, 100, 0));
+                addItemPane.add(addItemMessage, 0, 9);
+                GridPane.setHalignment(addItemMessage, HPos.CENTER);
             }
         });
 
@@ -343,6 +335,30 @@ public class UI {
         tabPane.getTabs().add(addItem);
         
         // Tab for every item in the auction
+        client.sendToServer(new Message(Message.ClientMessage.GET_ITEM_INFO));
+        waitForResponse();
+        ArrayList<Item> items = Item.itemInfo;
+        for (Item item : items) {
+            Tab itemTab = new Tab(item.getName(), new Label(item.getDescription()));
+            GridPane itemPane = new GridPane();
+            itemPane.getChildren().clear();
+            itemPane.setAlignment(Pos.CENTER);
+            itemPane.setVgap(10);
+            itemPane.setHgap(5);
+
+            Label name = new Label("Item Name: " + item.getName());
+            Label description = new Label("Description: " + item.getDescription());
+            Label bidPrice = new Label("Starting Bid Price: $" + item.getBidPrice() + "0");
+            Label buyPrice = new Label("Automatic Buy Price: $" + item.getBuyPrice() + "0");
+
+            itemPane.add(name, 0, 0);
+            itemPane.add(description, 0, 1);
+            itemPane.add(bidPrice, 0, 2);
+            itemPane.add(buyPrice, 0, 3);
+            
+            itemTab.setContent(itemPane);
+            tabPane.getTabs().add(itemTab);
+        }
 
 
         Scene scene = new Scene(tabPane);

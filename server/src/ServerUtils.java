@@ -10,6 +10,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
 import javax.sql.DataSource;
@@ -130,5 +132,25 @@ public class ServerUtils {
         } catch (SQLException sqle) {
             sqle.printStackTrace();
         }
+
+        updateClientBidding();
+    }
+
+    public static void updateClientBidding() {
+        Collection<BiddingItem> items = itemList.values();
+        ArrayList<Item> itemInfo = new ArrayList<Item>();
+        for (BiddingItem item : items) {
+            try {
+                Guest guest;
+                guest = db.getGuest(item.getBidderId());
+                String email = guest.getEmail();
+                itemInfo.add(item.toSimpleItem(email));
+            } catch (SQLException sqle) {
+                sqle.printStackTrace();
+            }
+        }
+        User user = new User("ALL CLIENTS");
+        Message message = new Message(Message.ServerMessage.SEND_ITEM_INFO, itemInfo, user);
+        server.sendToClient(message);
     }
 }

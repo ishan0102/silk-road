@@ -33,6 +33,10 @@ public class BiddingItem {
         this.valid = valid;
     }
 
+    public Item toSimpleItem(String email) {
+        return new Item(name, description, bidPrice.toString(), buyPrice.toString(), email);
+    }
+
     public Integer getItemId() {
         return itemId;
     }

@@ -1,4 +1,7 @@
+import java.util.ArrayList;
+
 public class Item {
+    public static ArrayList<Item> itemInfo;
     private String name;
     private String description;
     private String bidPrice;
@@ -11,6 +14,10 @@ public class Item {
         this.bidPrice = bidPrice;
         this.buyPrice = buyPrice;
         this.email = email;
+    }
+
+    public ArrayList<Item> getItemInfo() {
+        return itemInfo;
     }
 
     public String getName() {

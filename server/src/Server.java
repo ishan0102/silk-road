@@ -102,6 +102,9 @@ class Server extends Observable {
                     ServerUtils.addItem(item.getEmail(), item.getName(), item.getDescription(),
                             Double.valueOf(item.getBidPrice()), Double.valueOf(item.getBuyPrice()));
                     break;
+                case GET_ITEM_INFO:
+                    System.out.println("retrieving item info");
+                    ServerUtils.updateClientBidding();
             }
         } catch (Exception e) {
             e.printStackTrace();

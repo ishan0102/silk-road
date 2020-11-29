@@ -59,11 +59,12 @@ class Server extends Observable {
 
         // Initialize local data structure for users
         try {
-            ServerUtils.getGuestList();
+            ServerUtils.generateGuestList();
+            ServerUtils.generateItemList();
         } catch (SQLException sqle) {
             sqle.printStackTrace();
         }
-        System.out.println(ServerUtils.userEmails);
+        System.out.println(ServerUtils.guestList);
     }
 
     private void setUpNetworking() throws Exception {

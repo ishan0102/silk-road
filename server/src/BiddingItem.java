@@ -14,6 +14,7 @@ public class BiddingItem {
         this.name = name;
         this.description = description;
         this.bidPrice = bidPrice;
+        this.buyPrice = buyPrice;
         this.bidderId = bidderId;
         this.sellerId = bidderId;
         this.buyable = true;
@@ -25,6 +26,7 @@ public class BiddingItem {
         this.name = name;
         this.description = description;
         this.bidPrice = bidPrice;
+        this.buyPrice = buyPrice;
         this.bidderId = bidderId;
         this.sellerId = sellerId;
         this.buyable = buyable;
@@ -69,6 +71,8 @@ public class BiddingItem {
 
     @Override
     public String toString() {
-        return "name: " + name + " bid price: " + bidPrice + " buy price: " + " bidder id: " + bidderId;
+        return "id: " + itemId + ", name: " + name + ", description: " + description + ", bid price: " + bidPrice
+                + ", buy price: " + buyPrice + ", bidder id: " + bidderId + ", seller id: " + sellerId + ", buyable: "
+                + buyable + ", valid: " + valid;
     }
 }

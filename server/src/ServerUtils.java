@@ -18,22 +18,25 @@ public class ServerUtils {
     private static Server server;
     private static Database db;
     private static DataSource ds;
-    public static HashMap<String, Integer> userEmails;
+    public static HashMap<String, Integer> guestList;
+    public static HashMap<Integer, BiddingItem> itemList;
 
     public static void initialize(Database database, DataSource datasource) {
         db = database;
         ds = datasource;
-        userEmails = new HashMap<String, Integer>();
+        guestList = new HashMap<String, Integer>();
+        itemList = new HashMap<Integer, BiddingItem>();
     }
 
     public static void initialize(Server s, Database database, DataSource datasource) {
         server = s;
         db = database;
         ds = datasource;
-        userEmails = new HashMap<String, Integer>();
+        guestList = new HashMap<String, Integer>();
+        itemList = new HashMap<Integer, BiddingItem>();
     }
 
-    public static void getGuestList() throws SQLException {
+    public static void generateGuestList() throws SQLException {
         String getGuests = "SELECT * FROM guest";
         try (
 			Connection connection = ds.getConnection();
@@ -41,15 +44,25 @@ public class ServerUtils {
 		) {
 			ResultSet rs = getGuestsStatement.executeQuery();
             while (rs.next()) {
-                userEmails.putIfAbsent(rs.getString("email"), Integer.valueOf(rs.getString("id")));
+                guestList.putIfAbsent(rs.getString("email"), rs.getInt("id"));
+            }
+		}
+    }
 
-                // Prints out database
-                // System.out.println("id: " + rs.getString("id"));
-                // System.out.println("name: " + rs.getString("name"));
-                // System.out.println("email: " + rs.getString("email"));
-                // System.out.println("password: " + rs.getString("password"));
-                // System.out.println("last visit: " + rs.getString("last_visit"));
-                // System.out.println();
+    public static void generateItemList() throws SQLException {
+        String getItems = "SELECT * FROM item";
+        try (
+			Connection connection = ds.getConnection();
+			PreparedStatement getItemsStatement = connection.prepareStatement(getItems);
+		) {
+			ResultSet rs = getItemsStatement.executeQuery();
+            while (rs.next()) {
+                BiddingItem item = new BiddingItem(rs.getInt("id"), rs.getString("name"), rs.getString("description"),
+                        rs.getDouble("bid_price"), rs.getDouble("buy_price"), rs.getInt("bidder_id"),
+                        rs.getInt("seller_id"), rs.getBoolean("buyable"), rs.getBoolean("valid"));
+                itemList.putIfAbsent(Integer.valueOf(rs.getString("id")), item);
+
+                System.out.println(item);
             }
 		}
     }
@@ -57,12 +70,12 @@ public class ServerUtils {
     public static void signIn(String email, String password) {
         User user = new User(email);
         int id;
-        if (!userEmails.containsKey(email)) {
+        if (!guestList.containsKey(email)) {
             Message message = new Message(Message.ServerMessage.SIGNIN_STATUS, "No account with this email exists", user);
             server.sendToClient(message);
             return;
         } else {
-            id = userEmails.get(email);
+            id = guestList.get(email);
         }
 
         try {
@@ -85,7 +98,7 @@ public class ServerUtils {
     public static void signUp(String name, String email, String password) {
         User user = new User(email);
         
-        if (userEmails.containsKey(email)) {
+        if (guestList.containsKey(email)) {
             Message message = new Message(Message.ServerMessage.SIGNUP_STATUS, "An account with this email already exists", user);
             server.sendToClient(message);
             return;
@@ -95,7 +108,7 @@ public class ServerUtils {
         try {
             guest.recordVisit();
             id = db.insertGuest(guest);
-            userEmails.putIfAbsent(email, id);
+            guestList.putIfAbsent(email, id);
             user = new User(name, email, password, guest.getLastVisit());
             Message message = new Message(Message.ServerMessage.SIGNUP_STATUS, "Login successful", user);
             server.sendToClient(message);
@@ -103,6 +116,16 @@ public class ServerUtils {
             sqle.printStackTrace();
         } catch (NullPointerException npe) {
             System.out.println("NullPointerException, this should only show up if you run CreateDB.java");
+        }
+    }
+
+    public static void addItem(String creatorEmail, String name, String description, Double bidPrice, Double buyPrice) {
+        int creatorId = (guestList.get(creatorEmail));
+        BiddingItem newItem = new BiddingItem(name, description, bidPrice, buyPrice, creatorId); // item belongs to the creator until someone else bids
+        try {
+            db.insertBiddingItem(newItem);
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
         }
     }
 }

@@ -55,9 +55,9 @@ public class Message {
             default:
                 return "no message";
             case SIGNIN_STATUS:
-                return "no account with this email";
+                return status;
             case SIGNUP_STATUS:
-                return "account with this email exists";
+                return status;
         }
     }
 }

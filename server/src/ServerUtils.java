@@ -104,6 +104,8 @@ public class ServerUtils {
             server.sendToClient(message);
         } catch (SQLException sqle) {
             sqle.printStackTrace();
+        } catch (Exception e) {
+            System.out.println("NullPointerException, this should only show up if you run CreateDB.java");
         }
     }
 }

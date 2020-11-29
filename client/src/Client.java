@@ -21,6 +21,7 @@ public class Client extends Application {
     private static String host = "127.0.0.1";
     private BufferedReader fromServer;
     private PrintWriter toServer;
+    public static boolean messageReceived;
     private UI gui;
 
     public static void main(String[] args) {
@@ -33,6 +34,7 @@ public class Client extends Application {
         System.out.println("Connecting to... " + socket);
         fromServer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         toServer = new PrintWriter(socket.getOutputStream());
+        messageReceived = false;
 
         Thread readerThread = new Thread(new Runnable() {
             @Override
@@ -63,9 +65,11 @@ public class Client extends Application {
             switch (message.getServerMessageType()) {
                 case SIGNIN_STATUS:
                     UI.serverMessage = message.getStatus();
+                    Client.messageReceived = true;
                     break;
                 case SIGNUP_STATUS:
                     UI.serverMessage = message.getStatus();
+                    Client.messageReceived = true;
                     break;
             }
         } catch (Exception e) {

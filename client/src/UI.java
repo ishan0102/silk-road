@@ -108,8 +108,7 @@ public class UI {
                 Client.messageReceived = false;
 
                 Label signInMessage = new Label(serverMessage);
-                signInMessage.setTextFill(Color.rgb(255, 0, 0));
-                System.out.println(serverMessage);
+                signInMessage.setTextFill(Color.rgb(220, 20, 60));
                 signInPane.add(signInMessage, 0, 5);
                 GridPane.setHalignment(signInMessage, HPos.CENTER);
 
@@ -182,8 +181,7 @@ public class UI {
                 Client.messageReceived = false;
 
                 Label signUpMessage = new Label(serverMessage);
-                signUpMessage.setTextFill(Color.rgb(255, 0, 0));
-                System.out.println(serverMessage);
+                signUpMessage.setTextFill(Color.rgb(220, 20, 60));
                 signUpPane.add(signUpMessage, 0, 7);
                 GridPane.setHalignment(signUpMessage, HPos.CENTER);
 
@@ -284,7 +282,7 @@ public class UI {
         Label addNameLabel = new Label("Item Name");
         TextField addNameText = new TextField("");
         addNameText.setPromptText("PlayStation 5");
-        Label addDescriptionLabel = new Label("Item Name");
+        Label addDescriptionLabel = new Label("Description");
         TextField addDescriptionText = new TextField("");
         addDescriptionText.setPromptText("Elite gaming console");
         Label addBidLabel = new Label("Starting Bid Price");
@@ -298,7 +296,35 @@ public class UI {
         addItemButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                System.out.println("adding item");
+                Item item = new Item(addNameText.getText(), addDescriptionText.getText(), addBidText.getText(),
+                addBuyText.getText(), User.currentUser.email);
+                Message message = new Message(Message.ClientMessage.ADD_ITEM, item);
+                client.sendToServer(message);
+
+                addNameText.clear();
+                addDescriptionText.clear();
+                addBidText.clear();
+                addBuyText.clear();
+
+                while (!Client.messageReceived) {
+                    try {
+                        Thread.sleep(10);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                Client.messageReceived = false;
+
+                Label signUpMessage = new Label(serverMessage);
+                signUpMessage.setTextFill(Color.rgb(0, 100, 0));
+                addItemPane.add(signUpMessage, 0, 9);
+                GridPane.setHalignment(signUpMessage, HPos.CENTER);
+            }
+        });
+
+        addBuyText.setOnKeyPressed(event -> {
+            if (event.getCode().equals(KeyCode.ENTER)) {
+                addItemButton.fire();
             }
         });
 

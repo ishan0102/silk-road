@@ -72,6 +72,10 @@ public class Client extends Application {
                     UI.serverMessage = message.getStatus();
                     Client.messageReceived = true;
                     break;
+                case ADD_ITEM_STATUS:
+                    UI.serverMessage = message.getStatus();
+                    Client.messageReceived = true;
+                    break;
             }
         } catch (Exception e) {
             e.printStackTrace();

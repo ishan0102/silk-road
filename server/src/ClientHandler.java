@@ -38,7 +38,7 @@ class ClientHandler implements Runnable, Observer {
     protected void sendToClient(Message message) {
         GsonBuilder builder = new GsonBuilder();
         Gson gson = builder.create();
-        System.out.println("Sending to server: " + message);
+        System.out.println("Sending to client: " + message);
         toClient.println(gson.toJson(message));
         toClient.flush();
     }

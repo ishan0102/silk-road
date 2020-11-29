@@ -124,6 +124,9 @@ public class ServerUtils {
         BiddingItem newItem = new BiddingItem(name, description, bidPrice, buyPrice, creatorId); // item belongs to the creator until someone else bids
         try {
             db.insertBiddingItem(newItem);
+            User user = new User(creatorEmail);
+            Message message = new Message(Message.ServerMessage.ADD_ITEM_STATUS, "Item added successfully!", user);
+            server.sendToClient(message);
         } catch (SQLException sqle) {
             sqle.printStackTrace();
         }

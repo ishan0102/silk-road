@@ -9,18 +9,21 @@
 public class Message {
     public enum ClientMessage {
         SIGNIN, 
-        SIGNUP
+        SIGNUP,
+        ADD_ITEM
     }
 
     public enum ServerMessage {
         SIGNIN_STATUS, 
-        SIGNUP_STATUS
+        SIGNUP_STATUS,
+        ADD_ITEM_STATUS
     }
 
     private ClientMessage clientMessageType;
     private ServerMessage serverMessageType;
     private User user;
     private String status;
+    private Item item;
 
     public Message(ClientMessage clientMessageType, User user) {
         this.clientMessageType = clientMessageType;
@@ -31,6 +34,11 @@ public class Message {
         this.serverMessageType = serverMessageType;
         this.status = status;
         this.user = user;
+    }
+
+    public Message(ClientMessage clientMessageType, Item item) {
+        this.clientMessageType = clientMessageType;
+        this.item = item;
     }
 
     public ClientMessage getClientMessageType() {
@@ -49,6 +57,10 @@ public class Message {
         return status;
     }
 
+    public Item getItem() {
+        return item;
+    }
+
     @Override
     public String toString() {
         switch (serverMessageType) {
@@ -57,6 +69,8 @@ public class Message {
             case SIGNIN_STATUS:
                 return status;
             case SIGNUP_STATUS:
+                return status;
+            case ADD_ITEM_STATUS:
                 return status;
         }
     }

@@ -85,6 +85,7 @@ class Server extends Observable {
         Gson gson = new Gson();
         Message message = gson.fromJson(input, Message.class);
         User user = message.getUser();
+        Item item = message.getItem();
 
         try {
             switch (message.getClientMessageType()) {
@@ -95,6 +96,11 @@ class Server extends Observable {
                 case SIGNUP:
                     System.out.println("attempting sign up");
                     ServerUtils.signUp(user.name, user.email, user.password);
+                    break;
+                case ADD_ITEM:
+                    System.out.println("attempting to add item");
+                    ServerUtils.addItem(item.getEmail(), item.getName(), item.getDescription(),
+                            Double.valueOf(item.getBidPrice()), Double.valueOf(item.getBuyPrice()));
                     break;
             }
         } catch (Exception e) {

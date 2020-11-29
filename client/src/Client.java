@@ -94,6 +94,8 @@ public class Client extends Application {
             e.printStackTrace();
         }
 
+        primaryStage.setOnHiding(event -> System.exit(0));
+
         gui = new UI(this, primaryStage);
         gui.startGUI();
     }

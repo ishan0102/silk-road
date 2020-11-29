@@ -6,8 +6,6 @@
  * Fall 2020
  */
 
-import java.sql.Timestamp;
-import java.text.DateFormat;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
@@ -17,11 +15,15 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TabPane.TabClosingPolicy;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
@@ -225,29 +227,101 @@ public class UI {
     }
 
     public void biddingScreen() {
-        GridPane biddingScreenPane = new GridPane();
-        biddingScreenPane.getChildren().clear();
-        biddingScreenPane.setAlignment(Pos.CENTER);
-        biddingScreenPane.setVgap(10);
-        biddingScreenPane.setHgap(5);
+        TabPane tabPane = new TabPane();
+        tabPane.setTabClosingPolicy(TabClosingPolicy.UNAVAILABLE);
+        
+        // Home tab
+        Tab home = new Tab("Home", new Label("Welcome to eHills!"));
+        GridPane homePane = new GridPane();
+        homePane.getChildren().clear();
+        homePane.setAlignment(Pos.CENTER);
+        homePane.setVgap(10);
+        homePane.setHgap(5);
 
         User user = User.currentUser;
-
         DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
-                     .withLocale( Locale.US )
-                     .withZone( ZoneId.systemDefault() );
+                        .withLocale( Locale.US )
+                        .withZone( ZoneId.systemDefault() );
         String datetime = formatter.format(user.lastVisit);
         String[] dt = datetime.split(" ");
         Label welcome = new Label("Welcome to eHills " + user.name + 
                     "! Your last visit was on " + dt[0] + " at " + dt[1] + " " + dt[2] + ".");
 
+        Button signOutButton = new Button("Sign Out");
+        signOutButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                login();
+            }
+        });
+        
+        Button quitButton = new Button("Quit");
+        quitButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                stage.close();
+            }
+        });
 
-        biddingScreenPane.add(welcome, 0, 0);
-    
+        homePane.add(welcome, 0, 0);
+        GridPane.setValignment(welcome, VPos.TOP);
+        homePane.add(signOutButton, 0, 1);
+        GridPane.setHalignment(signOutButton, HPos.CENTER);
+        homePane.add(quitButton, 0, 2);
+        GridPane.setHalignment(quitButton, HPos.CENTER);
 
-        Scene scene = new Scene(biddingScreenPane);
-        stage.setWidth(1000);
-        stage.setHeight(750);
+        home.setContent(homePane);
+        tabPane.getTabs().add(home);
+
+        // Add item tab
+        Tab addItem = new Tab("Add Item", new Label("Add a new item to the auction"));
+        GridPane addItemPane = new GridPane();
+        addItemPane.getChildren().clear();
+        addItemPane.setAlignment(Pos.CENTER);
+        addItemPane.setVgap(10);
+        addItemPane.setHgap(5);
+
+        Label addNameLabel = new Label("Item Name");
+        TextField addNameText = new TextField("");
+        addNameText.setPromptText("PlayStation 5");
+        Label addDescriptionLabel = new Label("Item Name");
+        TextField addDescriptionText = new TextField("");
+        addDescriptionText.setPromptText("Elite gaming console");
+        Label addBidLabel = new Label("Starting Bid Price");
+        TextField addBidText = new TextField("");
+        addBidText.setPromptText("500.00");
+        Label addBuyLabel = new Label("Automatic Buy Price");
+        TextField addBuyText = new TextField();
+        addBuyText.setPromptText("1000.00");
+
+        Button addItemButton = new Button("Add Item");
+        addItemButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                System.out.println("adding item");
+            }
+        });
+
+        addItemPane.add(addNameLabel, 0, 0);
+        addItemPane.add(addNameText, 0, 1);
+        addItemPane.add(addDescriptionLabel, 0, 2);
+        addItemPane.add(addDescriptionText, 0, 3);
+        addItemPane.add(addBidLabel, 0, 4);
+        addItemPane.add(addBidText, 0, 5);
+        addItemPane.add(addBuyLabel, 0, 6);
+        addItemPane.add(addBuyText, 0, 7);
+        addItemPane.add(addItemButton, 0, 8);
+        GridPane.setHalignment(addItemButton, HPos.RIGHT);
+
+        addItem.setContent(addItemPane);
+        tabPane.getTabs().add(addItem);
+        
+        // Tab for every item in the auction
+
+
+        Scene scene = new Scene(tabPane);
+        stage.setWidth(800);
+        stage.setHeight(600);
         stage.centerOnScreen();
         stage.setScene(scene);
         stage.show();

@@ -34,13 +34,28 @@ class Database {
                 "email VARCHAR(255), " +
                 "password VARCHAR(255), " +
 				"last_visit TIMESTAMP" +
-			")";
+            ")";
+        String createItems = "CREATE TABLE item (" +
+                "id INTEGER NOT NULL " +
+                    "PRIMARY KEY GENERATED ALWAYS AS IDENTITY, " +
+                "name VARCHAR(255) NOT NULL, " +
+                "description VARCHAR(255) NOT NULL, " +
+                "bid_price DOUBLE NOT NULL, " +
+                "buy_price DOUBLE NOT NULL, " +
+                "bidder_id INTEGER NOT NULL, " +
+                "seller_id INTEGER NOT NULL, " +
+                "buyable BOOLEAN NOT NULL, " +
+                "valid BOOLEAN NOT NULL, " +
+                "FOREIGN KEY (bidder_id) REFERENCES guest (id)" +
+            ")";
 		try (
 			Connection connection = dataSource.getConnection();
-			Statement createGuestStatement = connection.createStatement();
+            Statement createGuestStatement = connection.createStatement();
+            Statement createItemsStatement = connection.createStatement();
 		) {
 			connection.setAutoCommit(false);
-			createGuestStatement.executeUpdate(createGuest);
+            createGuestStatement.executeUpdate(createGuest);
+            createItemsStatement.executeUpdate(createItems);
 			connection.commit();
 		}
 	}
@@ -110,17 +125,24 @@ class Database {
 		}
 		return guests;
 	}
-	
-	void clearDatabase() throws SQLException {
-		String clearGuests = "DELETE FROM guest";
+    
+    void insertBiddingItem(BiddingItem item) throws SQLException {
+		String insertItem = "INSERT INTO item (name, description, bid_price, buy_price, bidder_id, seller_id, buyable, valid)" +
+				"VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 		try (
 			Connection connection = dataSource.getConnection();
-			PreparedStatement clearGuestsStatement = connection.prepareStatement(clearGuests);
+			PreparedStatement insertItemStatement = connection.prepareStatement(insertItem);
 		) {
-			connection.setAutoCommit(false);
-			clearGuestsStatement.executeUpdate();
-			connection.commit();
+			insertItemStatement.setString(1, item.getName());
+			insertItemStatement.setString(2, item.getDescription());
+			insertItemStatement.setDouble(3, item.getBidPrice());
+			insertItemStatement.setDouble(4, item.getBuyPrice());
+			insertItemStatement.setInt(5, item.getBidderId());
+			insertItemStatement.setInt(6, item.getSellerId());
+			insertItemStatement.setBoolean(7, item.getBuyable());
+            insertItemStatement.setBoolean(8, item.getValid());
+            
+			insertItemStatement.executeUpdate();
 		}
 	}
-	
 }

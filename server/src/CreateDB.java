@@ -24,11 +24,17 @@ public class CreateDB {
         } else {
             System.out.println("Database already exists.");
         }
+        
         ServerUtils.initialize(db, dataSource);
         ServerUtils.signUp("Ishan Shah", "ishan0102@utexas.edu", "password");
         ServerUtils.signUp("Michael Chen", "user@utexas.edu", "password");
         ServerUtils.signUp("Yang Zhang", "user2@utexas.edu", "password");
         ServerUtils.signUp("Rishi Pona", "user5@utexas.edu", "password");
         ServerUtils.signUp("Brian Lee", "user6@utexas.edu", "password");
+
+        ServerUtils.addItem("ishan0102@utexas.edu", "MacBook Pro 13", "Apple computer", 0.00, 1000.00);
+        ServerUtils.addItem("ishan0102@utexas.edu", "Rolex Yachtmaster", "High end watch", 0.00, 15000.00);
+        ServerUtils.addItem("ishan0102@utexas.edu", "Comme des Garcons Sweater", "Streetwear clothing", 0.00, 400.00);
+        ServerUtils.addItem("ishan0102@utexas.edu", "iPhone 12", "Latest Apple phone", 0.00, 800.00);
     }
 }

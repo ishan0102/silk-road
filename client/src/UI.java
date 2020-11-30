@@ -45,7 +45,6 @@ public class UI {
 
     public void startGUI() {
         stage.setTitle("eHills");
-        tabList = new HashMap<String, HashMap<GridPane, Tab>>();
         login();
     }
 
@@ -231,6 +230,9 @@ public class UI {
     }
 
     public void biddingScreen() {
+        paneList = new HashMap<String, GridPane>();
+        tabList = new HashMap<String, Tab>();
+
         client.sendToServer(new Message(Message.ClientMessage.GET_ITEM_INFO));
         waitForResponse();
 
@@ -371,7 +373,8 @@ public class UI {
 
     public Label bidPrice = new Label("");
     public Label sendBidMessage = new Label("");
-    public HashMap<String, HashMap<GridPane, Tab>> tabList;
+    public HashMap<String, GridPane> paneList;
+    public HashMap<String, Tab> tabList;
 
     public Tab addItemTab(Item item) {
         Tab itemTab = new Tab(item.getName(), new Label(item.getDescription()));
@@ -405,10 +408,8 @@ public class UI {
         GridPane.setHalignment(sendBid, HPos.CENTER);
         itemTab.setContent(itemPane);
         
-        HashMap<GridPane, Tab> temp = new HashMap<GridPane, Tab>();
-        temp.put(itemPane, itemTab);
-        tabList.put(item.getName(), temp);
-
+        paneList.put(item.getName(), itemPane);
+        tabList.put(item.getName(), itemTab);
         return itemTab;
     }
 
@@ -417,15 +418,11 @@ public class UI {
             @Override
             public void run() {
                 sendBidMessage.setText(status);
-                bidPrice.setText("Bid Price: $" + item.getBidPrice() + "0");
+                bidPrice.setText("Bid Price: $" + item.getBidPrice());
 
-                GridPane itemPane = null;
-                Tab itemTab = null;
-                HashMap<GridPane, Tab> temp = tabList.get(item.getName());
-                for (Map.Entry<GridPane, Tab> m : temp.entrySet()) {
-                    itemPane = m.getKey();
-                    itemTab = m.getValue();
-                }
+                GridPane itemPane = paneList.get(item.getName());
+                Tab itemTab = tabList.get(item.getName());
+
                 itemPane.add(bidPrice, 0, 2);
                 itemPane.add(sendBidMessage, 0, 5);
                 GridPane.setHalignment(sendBidMessage, HPos.CENTER);

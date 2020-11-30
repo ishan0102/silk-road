@@ -42,4 +42,9 @@ public class User {
         this.password = password;
         this.lastVisit = lastVisit;
     }
+
+    @Override
+    public String toString() {
+        return "name: " + name + " email: " + email + " password: " + " last visit: " + lastVisit;
+    }
 }

@@ -105,6 +105,7 @@ class Server extends Observable {
                 case GET_ITEM_INFO:
                     System.out.println("retrieving item info");
                     ServerUtils.updateClientBidding();
+                    break;
             }
         } catch (Exception e) {
             e.printStackTrace();

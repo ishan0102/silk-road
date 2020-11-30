@@ -117,7 +117,13 @@ public class UI {
                 GridPane.setHalignment(signInMessage, HPos.CENTER);
 
                 if (serverMessage.equals("Login successful")) {
-                    biddingScreen();
+                    try {
+                        if (user.email.equals(User.currentUser.email)) {
+                            biddingScreen();
+                        }
+                    } catch (NullPointerException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });
@@ -221,6 +227,9 @@ public class UI {
     }
 
     public void biddingScreen() {
+        client.sendToServer(new Message(Message.ClientMessage.GET_ITEM_INFO));
+        waitForResponse();
+
         TabPane tabPane = new TabPane();
         tabPane.setTabClosingPolicy(TabClosingPolicy.UNAVAILABLE);
         
@@ -233,6 +242,7 @@ public class UI {
         homePane.setHgap(5);
 
         User user = User.currentUser;
+        System.out.println(user);
         DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
                         .withLocale( Locale.US )
                         .withZone( ZoneId.systemDefault() );
@@ -268,7 +278,7 @@ public class UI {
         tabPane.getTabs().add(home);
 
         // Add item tab
-        Tab addItem = new Tab("Add Item", new Label("Add a new item to the auction"));
+        /* Tab addItem = new Tab("Add Item", new Label("Add a new item to the auction"));
         GridPane addItemPane = new GridPane();
         addItemPane.getChildren().clear();
         addItemPane.setAlignment(Pos.CENTER);
@@ -301,6 +311,8 @@ public class UI {
                 addDescriptionText.clear();
                 addBidText.clear();
                 addBuyText.clear();
+                System.out.println(serverMessage);
+                System.out.println(Client.messageReceived);
 
                 waitForResponse();
 
@@ -311,8 +323,10 @@ public class UI {
                 addItemPane.add(addItemMessage, 0, 9);
                 GridPane.setHalignment(addItemMessage, HPos.CENTER);
 
-                Tab itemTab = addItemTab(item);
-                tabPane.getTabs().add(itemTab);
+                // client.sendToServer(new Message(Message.ClientMessage.GET_ITEM_INFO));
+                // waitForResponse();
+                // Tab itemTab = addItemTab(item);
+                // tabPane.getTabs().add(itemTab);
             }
         });
 
@@ -334,11 +348,9 @@ public class UI {
         GridPane.setHalignment(addItemButton, HPos.RIGHT);
 
         addItem.setContent(addItemPane);
-        tabPane.getTabs().add(addItem);
+        tabPane.getTabs().add(addItem); */
         
         // Tab for every item in the auction
-        client.sendToServer(new Message(Message.ClientMessage.GET_ITEM_INFO));
-        waitForResponse();
         ArrayList<Item> items = Item.itemInfo;
         for (Item item : items) {
             Tab itemTab = addItemTab(item);
@@ -364,13 +376,11 @@ public class UI {
 
         Label name = new Label("Item Name: " + item.getName());
         Label description = new Label("Description: " + item.getDescription());
-        Label bidPrice = new Label("Starting Bid Price: $" + item.getBidPrice() + "0");
-        Label buyPrice = new Label("Automatic Buy Price: $" + item.getBuyPrice() + "0");
+        Label bidPrice = new Label("Bid Price: $" + item.getBidPrice() + "0");
 
         itemPane.add(name, 0, 0);
         itemPane.add(description, 0, 1);
         itemPane.add(bidPrice, 0, 2);
-        itemPane.add(buyPrice, 0, 3);
         itemTab.setContent(itemPane);
 
         return itemTab;

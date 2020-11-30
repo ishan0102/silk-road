@@ -60,10 +60,14 @@ public class Client extends Application {
         Message message = gson.fromJson(input, Message.class);
         User user = message.getUser();
         ArrayList<Item> itemInfo = message.getItemInfo();
-        if (!user.email.equals("ALL CLIENTS") && !user.email.equals(User.currentUser.email)) {
-            return;
-        }
         if (!user.email.equals("ALL CLIENTS")) {
+            try {
+                if (!user.email.equals(User.currentUser.email)) {
+                    return;
+                }
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+            }
             User.currentUser = user;
         }
 

@@ -158,7 +158,7 @@ public class ServerUtils {
         if (bidPrice > 0 && bidPrice >= bidItem.getBuyPrice()) {
             bidItem.setBidPrice(bidPrice);
             synchronized(lock) {
-                bidItem.setBidderId(id);
+                bidItem.setBidPrice(bidPrice);
             }
             bidItem.setBuyable(false);
             User user = new User("ALL CLIENTS");
@@ -167,7 +167,7 @@ public class ServerUtils {
             server.sendToClient(message);
         } else if (bidPrice > 0 && bidPrice > bidItem.getBidPrice()) {
             synchronized(lock) {
-                bidItem.setBidderId(id);
+                bidItem.setBidPrice(bidPrice);
             }
             bidItem.setBidderId(id);
             User user = new User("ALL CLIENTS");

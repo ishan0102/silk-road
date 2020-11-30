@@ -106,6 +106,8 @@ public class Message {
                 return "SIGNING UP! name: " + user.name + ", email: " + user.email + ", password: " + user.password;
             case ADD_ITEM:
                 return "ADDING ITEM!";
+            case SEND_BID:
+                return "bid price: " + item.getBidPrice();
         }
     }
 }

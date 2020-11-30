@@ -16,6 +16,10 @@ public class Item {
         this.email = email;
     }
 
+    public void setBidPrice(String bidPrice) {
+        this.bidPrice = bidPrice;
+    }
+
     public ArrayList<Item> getItemInfo() {
         return itemInfo;
     }

@@ -60,6 +60,7 @@ public class Client extends Application {
         Message message = gson.fromJson(input, Message.class);
         User user = message.getUser();
         ArrayList<Item> itemInfo = message.getItemInfo();
+        Item item = message.getItem();
         if (!user.email.equals("ALL CLIENTS")) {
             try {
                 if (!user.email.equals(User.currentUser.email)) {
@@ -90,7 +91,9 @@ public class Client extends Application {
                     Item.itemInfo = itemInfo;
                     Client.messageReceived = true;
                     break;
-
+                case SEND_BID_STATUS:
+                    gui.updateBidInfo(item, message.getStatus());
+                    break;
             }
         } catch (Exception e) {
             e.printStackTrace();

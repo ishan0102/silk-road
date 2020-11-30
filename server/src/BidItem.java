@@ -1,4 +1,4 @@
-public class BiddingItem {
+public class BidItem {
     private Integer itemId;
     private String name;
     private String description;
@@ -9,7 +9,7 @@ public class BiddingItem {
     private Boolean buyable;
     private Boolean valid;
 
-    public BiddingItem(String name, String description, Double bidPrice, Double buyPrice, Integer bidderId) {
+    public BidItem(String name, String description, Double bidPrice, Double buyPrice, Integer bidderId) {
         this.itemId = null;
         this.name = name;
         this.description = description;
@@ -21,7 +21,7 @@ public class BiddingItem {
         this.valid = true;
     }
 
-    public BiddingItem(int itemId, String name, String description, double bidPrice, double buyPrice, int bidderId, int sellerId, boolean buyable, boolean valid) {
+    public BidItem(int itemId, String name, String description, double bidPrice, double buyPrice, int bidderId, int sellerId, boolean buyable, boolean valid) {
         this.itemId = itemId;
         this.name = name;
         this.description = description;
@@ -71,6 +71,26 @@ public class BiddingItem {
 
     public Boolean getValid() {
         return valid;
+    }
+
+    public void setBidPrice(Double bidPrice) {
+        this.bidPrice = bidPrice;
+    }
+
+    public void setBuyPrice(Double buyPrice) {
+        this.buyPrice = buyPrice;
+    }
+
+    public void setBidderId(Integer bidderId) {
+        this.bidderId = bidderId;
+    }
+
+    public void setBuyable(Boolean buyable) {
+        this.buyable = buyable;
+    }
+
+    public void setValid(Boolean valid) {
+        this.valid = valid;
     }
 
     @Override

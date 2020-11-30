@@ -10,8 +10,11 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
@@ -42,6 +45,7 @@ public class UI {
 
     public void startGUI() {
         stage.setTitle("eHills");
+        tabList = new HashMap<String, HashMap<GridPane, Tab>>();
         login();
     }
 
@@ -242,7 +246,6 @@ public class UI {
         homePane.setHgap(5);
 
         User user = User.currentUser;
-        System.out.println(user);
         DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
                         .withLocale( Locale.US )
                         .withZone( ZoneId.systemDefault() );
@@ -366,6 +369,10 @@ public class UI {
         stage.show();
     }
 
+    public Label bidPrice = new Label("");
+    public Label sendBidMessage = new Label("");
+    public HashMap<String, HashMap<GridPane, Tab>> tabList;
+
     public Tab addItemTab(Item item) {
         Tab itemTab = new Tab(item.getName(), new Label(item.getDescription()));
         GridPane itemPane = new GridPane();
@@ -376,14 +383,55 @@ public class UI {
 
         Label name = new Label("Item Name: " + item.getName());
         Label description = new Label("Description: " + item.getDescription());
-        Label bidPrice = new Label("Bid Price: $" + item.getBidPrice() + "0");
+        bidPrice.setText("Bid Price: $" + item.getBidPrice() + "0");
+        TextField addBid = new TextField();
+        addBid.setPromptText("Bid on this item");
+        
+        Button sendBid = new Button("Send Bid");
+        sendBid.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                User user = User.currentUser;
+                item.setBidPrice(addBid.getText());
+                Message message = new Message(Message.ClientMessage.SEND_BID, item, user);
+                client.sendToServer(message);
+            }
+        });
 
         itemPane.add(name, 0, 0);
         itemPane.add(description, 0, 1);
-        itemPane.add(bidPrice, 0, 2);
+        itemPane.add(addBid, 0, 3);
+        itemPane.add(sendBid, 0, 4);
+        GridPane.setHalignment(sendBid, HPos.CENTER);
         itemTab.setContent(itemPane);
+        
+        HashMap<GridPane, Tab> temp = new HashMap<GridPane, Tab>();
+        temp.put(itemPane, itemTab);
+        tabList.put(item.getName(), temp);
 
         return itemTab;
+    }
+
+    public void updateBidInfo(Item item, String status) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                sendBidMessage.setText(status);
+                bidPrice.setText("Bid Price: $" + item.getBidPrice() + "0");
+
+                GridPane itemPane = null;
+                Tab itemTab = null;
+                HashMap<GridPane, Tab> temp = tabList.get(item.getName());
+                for (Map.Entry<GridPane, Tab> m : temp.entrySet()) {
+                    itemPane = m.getKey();
+                    itemTab = m.getValue();
+                }
+                itemPane.add(bidPrice, 0, 2);
+                itemPane.add(sendBidMessage, 0, 5);
+                GridPane.setHalignment(sendBidMessage, HPos.CENTER);
+                itemTab.setContent(itemPane);
+            }
+        });
     }
 
 }

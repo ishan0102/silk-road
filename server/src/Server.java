@@ -106,6 +106,10 @@ class Server extends Observable {
                     System.out.println("retrieving item info");
                     ServerUtils.updateClientBidding();
                     break;
+                case SEND_BID:
+                    System.out.println("checking bid");
+                    System.out.println(user);
+                    ServerUtils.checkBid(user.email, item);
             }
         } catch (Exception e) {
             e.printStackTrace();

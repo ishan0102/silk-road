@@ -21,13 +21,14 @@ public class ServerUtils {
     private static Database db;
     private static DataSource ds;
     public static HashMap<String, Integer> guestList;
-    public static HashMap<Integer, BiddingItem> itemList;
+    public static HashMap<String, BidItem> itemList;
+    public static Object lock = new Object();
 
     public static void initialize(Database database, DataSource datasource) {
         db = database;
         ds = datasource;
         guestList = new HashMap<String, Integer>();
-        itemList = new HashMap<Integer, BiddingItem>();
+        itemList = new HashMap<String, BidItem>();
     }
 
     public static void initialize(Server s, Database database, DataSource datasource) {
@@ -35,7 +36,7 @@ public class ServerUtils {
         db = database;
         ds = datasource;
         guestList = new HashMap<String, Integer>();
-        itemList = new HashMap<Integer, BiddingItem>();
+        itemList = new HashMap<String, BidItem>();
     }
 
     public static void generateGuestList() throws SQLException {
@@ -59,10 +60,10 @@ public class ServerUtils {
 		) {
 			ResultSet rs = getItemsStatement.executeQuery();
             while (rs.next()) {
-                BiddingItem item = new BiddingItem(rs.getInt("id"), rs.getString("name"), rs.getString("description"),
+                BidItem item = new BidItem(rs.getInt("id"), rs.getString("name"), rs.getString("description"),
                         rs.getDouble("bid_price"), rs.getDouble("buy_price"), rs.getInt("bidder_id"),
                         rs.getInt("seller_id"), rs.getBoolean("buyable"), rs.getBoolean("valid"));
-                itemList.putIfAbsent(Integer.valueOf(rs.getString("id")), item);
+                itemList.putIfAbsent(rs.getString("name"), item);
 
                 System.out.println(item);
             }
@@ -123,9 +124,9 @@ public class ServerUtils {
 
     public static void addItem(String creatorEmail, String name, String description, Double bidPrice, Double buyPrice) {
         int creatorId = (guestList.get(creatorEmail));
-        BiddingItem newItem = new BiddingItem(name, description, bidPrice, buyPrice, creatorId); // item belongs to the creator until someone else bids
+        BidItem newItem = new BidItem(name, description, bidPrice, buyPrice, creatorId); // item belongs to the creator until someone else bids
         try {
-            db.insertBiddingItem(newItem);
+            db.insertBidItem(newItem);
             User user = new User(creatorEmail);
             Message message = new Message(Message.ServerMessage.ADD_ITEM_STATUS, "Item added successfully!", user);
             server.sendToClient(message);
@@ -137,13 +138,54 @@ public class ServerUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
 
+    public static void checkBid(String bidderEmail, Item item) {
+        BidItem bidItem = itemList.get(item.getName());
+        int id = guestList.get(bidderEmail);
+        
+        Double bidPrice;
+        try {
+            bidPrice = Double.valueOf(item.getBidPrice());
+        } catch (Exception e) {
+            bidPrice = -1.0;
+            User user = new User(bidderEmail);
+            Message message = new Message(Message.ServerMessage.SEND_BID_STATUS,
+                    "Your bid is invalid (" + e.toString() + ")", bidItem.toSimpleItem(bidderEmail), user);
+            server.sendToClient(message);
+        }
+        
+        if (bidPrice > 0 && bidPrice >= bidItem.getBuyPrice()) {
+            bidItem.setBidPrice(bidPrice);
+            synchronized(lock) {
+                bidItem.setBidderId(id);
+            }
+            bidItem.setBuyable(false);
+            User user = new User("ALL CLIENTS");
+            Message message = new Message(Message.ServerMessage.SEND_BID_STATUS, bidderEmail + " has won this auction!",
+                    bidItem.toSimpleItem(bidderEmail), user);
+            server.sendToClient(message);
+        } else if (bidPrice > 0 && bidPrice > bidItem.getBidPrice()) {
+            synchronized(lock) {
+                bidItem.setBidderId(id);
+            }
+            bidItem.setBidderId(id);
+            User user = new User("ALL CLIENTS");
+            Message message = new Message(Message.ServerMessage.SEND_BID_STATUS, "Bid has been updated",
+                    bidItem.toSimpleItem(bidderEmail), user);
+            server.sendToClient(message);
+        } else if (bidPrice > 0 && bidPrice <= bidItem.getBidPrice()) {
+            User user = new User(bidderEmail);
+            Message message = new Message(Message.ServerMessage.SEND_BID_STATUS, "Bid is not high enough",
+                    bidItem.toSimpleItem(bidderEmail), user);
+            server.sendToClient(message);
+        }
     }
 
     public static void updateClientBidding() {
-        Collection<BiddingItem> items = itemList.values();
+        Collection<BidItem> items = itemList.values();
         ArrayList<Item> itemInfo = new ArrayList<Item>();
-        for (BiddingItem item : items) {
+        for (BidItem item : items) {
             try {
                 Guest guest;
                 guest = db.getGuest(item.getBidderId());

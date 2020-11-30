@@ -13,14 +13,16 @@ public class Message {
         SIGNIN, 
         SIGNUP,
         ADD_ITEM,
-        GET_ITEM_INFO
+        GET_ITEM_INFO,
+        SEND_BID
     }
 
     public enum ServerMessage {
         SIGNIN_STATUS, 
         SIGNUP_STATUS,
         ADD_ITEM_STATUS,
-        SEND_ITEM_INFO
+        SEND_ITEM_INFO,
+        SEND_BID_STATUS
     }
 
     private ClientMessage clientMessageType;
@@ -35,24 +37,37 @@ public class Message {
         this.user = user;
     }
 
-    public Message(ServerMessage serverMessageType, String status, User user) {
-        this.serverMessageType = serverMessageType;
-        this.status = status;
-        this.user = user;
-    }
-
     public Message(ClientMessage clientMessageType, Item item) {
         this.clientMessageType = clientMessageType;
         this.item = item;
+    }
+    
+    public Message(ClientMessage clientMessageType, Item item, User user) {
+        this.clientMessageType = clientMessageType;
+        this.item = item;
+        this.user = user;
     }
 
     public Message(ClientMessage clientMessageType) {
         this.clientMessageType = clientMessageType;
     }
 
+    public Message(ServerMessage serverMessageType, String status, User user) {
+        this.serverMessageType = serverMessageType;
+        this.status = status;
+        this.user = user;
+    }
+
     public Message(ServerMessage serverMessageType, ArrayList<Item> itemInfo, User user) {
         this.serverMessageType = serverMessageType;
         this.itemInfo = itemInfo;
+        this.user = user;
+    }
+
+    public Message(ServerMessage serverMessageType, String status, Item item, User user) {
+        this.serverMessageType = serverMessageType;
+        this.status = status;
+        this.item = item;
         this.user = user;
     }
 

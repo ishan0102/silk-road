@@ -126,7 +126,7 @@ class Database {
 		return guests;
 	}
     
-    void insertBiddingItem(BiddingItem item) throws SQLException {
+    void insertBidItem(BidItem item) throws SQLException {
 		String insertItem = "INSERT INTO item (name, description, bid_price, buy_price, bidder_id, seller_id, buyable, valid)" +
 				"VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 		try (

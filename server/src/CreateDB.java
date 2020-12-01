@@ -25,9 +25,9 @@ public class CreateDB {
         ServerUtils.signUp("Caleb Yu", "user3@utexas.edu", "password");
         ServerUtils.signUp("Timothy Situ", "user4@utexas.edu", "password");
 
-        ServerUtils.addItem("ishan0102@utexas.edu", "MacBook Pro 13", "Apple computer", 0.00, 1000.00);
-        ServerUtils.addItem("ishan0102@utexas.edu", "Rolex Yachtmaster", "High end watch", 0.00, 15000.00);
-        ServerUtils.addItem("ishan0102@utexas.edu", "Comme des Garcons Sweater", "Streetwear clothing", 0.00, 400.00);
-        ServerUtils.addItem("ishan0102@utexas.edu", "iPhone 12", "Latest Apple phone", 0.00, 800.00);
+        ServerUtils.addItem("ishan0102@utexas.edu", "MacBook Pro 13", "High quality Apple computer", "0.00", "1000.00");
+        ServerUtils.addItem("ishan0102@utexas.edu", "Rolex Yachtmaster", "High end watch", "0.00", "15000.00");
+        ServerUtils.addItem("ishan0102@utexas.edu", "Off White Sweater", "Modern streetwear clothing", "0.00", "400.00");
+        ServerUtils.addItem("ishan0102@utexas.edu", "iPhone 12 Pro", "Latest Apple iPhone", "0.00", "800.00");
     }
 }

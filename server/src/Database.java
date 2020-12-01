@@ -162,6 +162,7 @@ class Database {
 			updateItemStatement.setInt(6, item.getSellerId());
 			updateItemStatement.setBoolean(7, item.getBuyable());
             updateItemStatement.setBoolean(8, item.getValid());
+            updateItemStatement.setInt(9, item.getItemId());
             
 			updateItemStatement.executeUpdate();
 		}

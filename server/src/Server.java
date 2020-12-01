@@ -26,8 +26,7 @@ class Server extends Observable {
     public static void main(String[] args) {
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
-                System.out.println("Shutdown Hook is running!");
-                // ServerUtils.updateItemDB();
+                ServerUtils.updateItemDB();
             }
         });
         server = new Server();

@@ -30,6 +30,7 @@ import javafx.scene.control.TabPane.TabClosingPolicy;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 public class UI {
@@ -63,6 +64,9 @@ public class UI {
         loginPane.setAlignment(Pos.CENTER);
         loginPane.setVgap(12);
 
+        Label welcome = new Label("The Silk Road");
+        welcome.setFont(new Font("Times New Roman", 30));
+
         Button signIn = new Button("Sign In");
         signIn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -79,9 +83,11 @@ public class UI {
             }
         });
 
-        loginPane.add(signIn, 0, 0);
+        loginPane.add(welcome, 0, 0);
+        GridPane.setHalignment(welcome, HPos.CENTER);
+        loginPane.add(signIn, 0, 1);
         GridPane.setHalignment(signIn, HPos.CENTER);
-        loginPane.add(signUp, 0, 1);
+        loginPane.add(signUp, 0, 2);
         GridPane.setHalignment(signUp, HPos.CENTER);
 
         Scene scene = new Scene(loginPane);
@@ -260,8 +266,9 @@ public class UI {
         String datetime = formatter.format(user.lastVisit);
         String[] dt = datetime.split(" ");
         Label welcome = new Label("Welcome to The Silk Road " + user.name + 
-                    "! Your last visit was on " + dt[0] + " at " + dt[1] + " " + dt[2] + ".");
-
+                    "!\nYour last visit was on " + dt[0] + " at " + dt[1] + " " + dt[2] + ".");
+        welcome.setFont(new Font("Times New Roman", 40));
+        
         Button signOutButton = new Button("Sign Out");
         signOutButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -364,7 +371,7 @@ public class UI {
         addItemPane.add(addBuyLabel, 0, 6);
         addItemPane.add(addBuyText, 0, 7);
         addItemPane.add(addItemButton, 0, 8);
-        GridPane.setHalignment(addItemButton, HPos.RIGHT);
+        GridPane.setHalignment(addItemButton, HPos.CENTER);
 
         addItem.setContent(addItemPane);
         tabPane.getTabs().add(addItem);
@@ -409,10 +416,13 @@ public class UI {
                 Tab itemTab = tabList.get(item.getName());
                 itemPane.getChildren().clear();
 
-                Label name = new Label("Item Name: " + item.getName());
+                Label name = new Label(item.getName());
+                name.setFont(new Font("Times New Roman", 30));
                 Label description = new Label("Description: " + item.getDescription());
+                description.setFont(new Font("Arial", 20));
                 Label bidPrice = new Label("");
                 bidPrice.setText("Bid Price: $" + item.getBidPrice());
+                bidPrice.setFont(new Font("Arial", 20));
                 TextField addBid = new TextField();
                 addBid.setPromptText("Bid on this item");
                 
@@ -431,6 +441,7 @@ public class UI {
                 sendBidMessage.setText(status);
                 
                 itemPane.add(name, 0, 0);
+                GridPane.setHalignment(name, HPos.CENTER);
                 itemPane.add(description, 0, 1);
                 itemPane.add(bidPrice, 0, 2);
                 itemPane.add(addBid, 0, 3);

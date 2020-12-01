@@ -32,6 +32,10 @@ public class Client extends Application {
         launch(args);
     }
 
+    /**
+     * Set up client side threads
+     * @throws Exception
+     */
     private void setUpNetworking() throws Exception {
         @SuppressWarnings("resource")
         Socket socket = new Socket(host, 4242);
@@ -57,6 +61,10 @@ public class Client extends Application {
         readerThread.start();
     }
 
+    /**
+     * Handle incoming messages from server
+     * @param input message to be deciphered
+     */
     protected void processRequest(String input) {
         Gson gson = new Gson();
         Message message = gson.fromJson(input, Message.class);
@@ -111,6 +119,10 @@ public class Client extends Application {
         }
     }
 
+    /**
+     * Send message to server
+     * @param message
+     */
     public void sendToServer(Message message) {
         GsonBuilder builder = new GsonBuilder();
         Gson gson = builder.create();

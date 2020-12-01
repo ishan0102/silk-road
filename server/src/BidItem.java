@@ -1,3 +1,14 @@
+/*
+ * EE422C Final Project submission by
+ * Ishan Shah
+ * irs428
+ * 16165
+ * Fall 2020
+ */
+
+/**
+ * Bidding item for a particular auction item
+ */
 public class BidItem {
     private Integer itemId;
     private String name;

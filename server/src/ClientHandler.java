@@ -24,6 +24,11 @@ class ClientHandler implements Runnable, Observer {
     private BufferedReader fromClient;
     private PrintWriter toClient;
 
+    /**
+     * Handles all clients
+     * @param server auction server
+     * @param clientSocket specific client
+     */
     protected ClientHandler(Server server, Socket clientSocket) {
         this.server = server;
         this.clientSocket = clientSocket;
@@ -35,6 +40,10 @@ class ClientHandler implements Runnable, Observer {
         }
     }
 
+    /**
+     * Send message to client
+     * @param message
+     */
     protected void sendToClient(Message message) {
         GsonBuilder builder = new GsonBuilder();
         Gson gson = builder.create();

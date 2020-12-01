@@ -1,6 +1,6 @@
 /*
-* EE422C Final Project submission by
-* Ishan Shah
+ * EE422C Final Project submission by
+ * Ishan Shah
  * irs428
  * 16165
  * Fall 2020
@@ -8,7 +8,13 @@
 
 import java.util.HashMap;
 
+/**
+ * This class is used to send messages between the client and server
+ */
 public class Message {
+    /**
+     * All client message types
+     */
     public enum ClientMessage {
         SIGNIN, 
         SIGNUP,
@@ -18,6 +24,9 @@ public class Message {
         SEND_BID
     }
 
+    /**
+     * All server message types
+     */
     public enum ServerMessage {
         SIGNIN_STATUS, 
         SIGNUP_STATUS,

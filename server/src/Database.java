@@ -25,7 +25,11 @@ class Database {
 	Database(DataSource dataSource) {
 		this.dataSource = dataSource;
 	}
-	
+    
+    /**
+     * Initialize guest and item databases
+     * @throws SQLException
+     */
 	void initialize() throws SQLException {
 		String createGuest = "CREATE TABLE guest (" +
 				"id INTEGER NOT NULL " +
@@ -59,7 +63,13 @@ class Database {
 			connection.commit();
 		}
 	}
-	
+    
+    /**
+     * Insert a new guest into the database
+     * @param guest guest to insert
+     * @return guest ID
+     * @throws SQLException
+     */
 	int insertGuest(Guest guest) throws SQLException {
 		String insertGuest = "INSERT INTO guest (name, email, password, last_visit) " +
 			"VALUES (?, ?, ?, ?)";
@@ -80,7 +90,12 @@ class Database {
 			return id;
 		}
 	}
-	
+    
+    /**
+     * Update guest data
+     * @param guest guest to be updated
+     * @throws SQLException
+     */
 	void updateGuest(Guest guest) throws SQLException {
 		String updateGuest = "UPDATE guest " +
 				"SET name = ?, email = ?, password = ?, last_visit = ? " +
@@ -98,7 +113,13 @@ class Database {
 			updateGuestStatement.executeUpdate();
 		}
 	}
-	
+    
+    /**
+     * Get a specific guest
+     * @param id guest id to be pulled
+     * @return guest
+     * @throws SQLException
+     */
 	Guest getGuest(int id) throws SQLException {
 		String selectGuest = "SELECT * FROM guest " +
 				"WHERE id = ?";
@@ -111,7 +132,7 @@ class Database {
 			return readGuestResultSet(results).get(0);
 		}
 	}
-	
+    
 	private static List<Guest> readGuestResultSet(ResultSet results) throws SQLException {
 		List<Guest> guests = new ArrayList<>();
 		while (results.next()) {
@@ -126,6 +147,11 @@ class Database {
 		return guests;
 	}
     
+    /**
+     * Insert item into database
+     * @param item item to be inserted
+     * @throws SQLException
+     */
     void insertBidItem(BidItem item) throws SQLException {
 		String insertItem = "INSERT INTO item (name, description, bid_price, buy_price, bidder_id, seller_id, buyable, valid)" +
 				"VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
@@ -146,6 +172,11 @@ class Database {
 		}
     }
     
+    /**
+     * Update a particular item
+     * @param item item to be updated
+     * @throws SQLException
+     */
     void updateItem(BidItem item) throws SQLException {
 		String updateItem = "UPDATE item " +
 				"SET name = ?, description = ?, bid_price = ?, buy_price = ?, bidder_id = ?, seller_id = ?, buyable = ?, valid = ? " +
@@ -167,7 +198,13 @@ class Database {
 			updateItemStatement.executeUpdate();
 		}
 	}
-	
+    
+    /**
+     * Item to be pulled
+     * @param id id of item to be pulled
+     * @return
+     * @throws SQLException
+     */
 	BidItem getItem(int id) throws SQLException {
 		String selectItem = "SELECT * FROM item " +
 				"WHERE id = ?";

@@ -31,6 +31,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
 import javafx.stage.Stage;
 
 public class UI {
@@ -48,6 +49,9 @@ public class UI {
         login();
     }
 
+    /**
+     * Busy wait for a server response
+     */
     public void waitForResponse() {
         while (!Client.messageReceived) {
             try {
@@ -59,13 +63,16 @@ public class UI {
         Client.messageReceived = false;
     }
 
+    /**
+     * Login screen
+     */
     public void login() {
         GridPane loginPane = new GridPane();
         loginPane.setAlignment(Pos.CENTER);
         loginPane.setVgap(12);
 
         Label welcome = new Label("The Silk Road");
-        welcome.setFont(new Font("Times New Roman", 30));
+        welcome.setFont(Font.font("Times New Roman", FontPosture.ITALIC, 30));
 
         Button signIn = new Button("Sign In");
         signIn.setOnAction(new EventHandler<ActionEvent>() {
@@ -98,6 +105,9 @@ public class UI {
         stage.show();
     }
 
+    /**
+     * Sign in screen
+     */
     public void signIn() {
         GridPane signInPane = new GridPane();
         signInPane.setAlignment(Pos.CENTER);
@@ -169,6 +179,9 @@ public class UI {
         stage.show();
     }
 
+    /**
+     * Sign up screen
+     */
     public void signUp() {
         GridPane signUpPane = new GridPane();
         signUpPane.setAlignment(Pos.CENTER);
@@ -241,6 +254,9 @@ public class UI {
 
     public TabPane tabPane;
     
+    /**
+     * Main bidding screen with home, add item, and individual item tabs
+     */
     public void biddingScreen() {
         paneList = new HashMap<String, GridPane>();
         tabList = new HashMap<String, Tab>();
@@ -286,6 +302,7 @@ public class UI {
         });
 
         homePane.add(welcome, 0, 0);
+        GridPane.setHalignment(welcome, HPos.CENTER);
         GridPane.setValignment(welcome, VPos.TOP);
         homePane.add(signOutButton, 0, 1);
         GridPane.setHalignment(signOutButton, HPos.CENTER);
@@ -395,6 +412,11 @@ public class UI {
     public HashMap<String, GridPane> paneList;
     public HashMap<String, Tab> tabList;
 
+    /**
+     * Add a new tab for an item
+     * @param item item tab to be created
+     * @return new Tab
+     */
     public Tab addItemTab(Item item) {
         Tab itemTab = new Tab(item.getName(), new Label(item.getDescription()));
         GridPane itemPane = new GridPane();
@@ -408,6 +430,11 @@ public class UI {
         return itemTab;
     }
 
+    /**
+     * Update all bidding information for clients
+     * @param item item to be updated
+     * @param status new status message
+     */
     public void updateBidInfo(Item item, String status) {
         Platform.runLater(new Runnable() {
             @Override
@@ -416,13 +443,16 @@ public class UI {
                 Tab itemTab = tabList.get(item.getName());
                 itemPane.getChildren().clear();
 
+                Label welcome = new Label("The Silk Road");
+                welcome.setFont(Font.font("Times New Roman", FontPosture.ITALIC, 40));
+
                 Label name = new Label(item.getName());
-                name.setFont(new Font("Times New Roman", 30));
+                name.setFont(new Font("Calibri", 30));
                 Label description = new Label("Description: " + item.getDescription());
-                description.setFont(new Font("Arial", 20));
+                description.setFont(new Font("Calibri", 20));
                 Label bidPrice = new Label("");
                 bidPrice.setText("Bid Price: $" + item.getBidPrice());
-                bidPrice.setFont(new Font("Arial", 20));
+                bidPrice.setFont(new Font("Calibri", 20));
                 TextField addBid = new TextField();
                 addBid.setPromptText("Bid on this item");
                 
@@ -436,26 +466,35 @@ public class UI {
                         client.sendToServer(message);
                     }
                 });
+
+                addBid.setOnKeyPressed(event -> {
+                    if (event.getCode().equals(KeyCode.ENTER)) {
+                        sendBid.fire();
+                    }
+                });
                 
                 Label sendBidMessage = new Label("");
-                sendBidMessage.setFont(new Font("Arial", 15));
+                sendBidMessage.setFont(new Font("Calibri", 18));
                 sendBidMessage.setText(status);
                 if (status.contains("has won this auction")) {
                     sendBidMessage.setTextFill(Color.rgb(0, 100, 0));
                 } else if (status.contains("Bid has been updated")) {
-                    sendBidMessage.setTextFill(Color.BLACK);
+                    sendBidMessage.setTextFill(Color.PURPLE);
                 } else {
                     sendBidMessage.setTextFill(Color.rgb(220, 20, 60));
                 }
                 
-                itemPane.add(name, 0, 0);
+                itemPane.add(welcome, 0, 0);
+                GridPane.setHalignment(welcome, HPos.CENTER);
+                GridPane.setValignment(welcome, VPos.TOP);
+                itemPane.add(name, 0, 1);
                 GridPane.setHalignment(name, HPos.CENTER);
-                itemPane.add(description, 0, 1);
-                itemPane.add(bidPrice, 0, 2);
-                itemPane.add(addBid, 0, 3);
-                itemPane.add(sendBid, 0, 4);
+                itemPane.add(description, 0, 2);
+                itemPane.add(bidPrice, 0, 3);
+                itemPane.add(addBid, 0, 4);
+                itemPane.add(sendBid, 0, 5);
                 GridPane.setHalignment(sendBid, HPos.CENTER);
-                itemPane.add(sendBidMessage, 0, 5);
+                itemPane.add(sendBidMessage, 0, 6);
                 GridPane.setHalignment(sendBidMessage, HPos.CENTER);
                 itemTab.setContent(itemPane);
             }

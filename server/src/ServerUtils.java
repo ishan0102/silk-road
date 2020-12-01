@@ -38,6 +38,10 @@ public class ServerUtils {
         itemList = new HashMap<String, BidItem>();
     }
 
+    /**
+     * Generate map to store guest relationships
+     * @throws SQLException
+     */
     public static void generateGuestList() throws SQLException {
         String getGuests = "SELECT * FROM guest";
         try (
@@ -51,6 +55,10 @@ public class ServerUtils {
 		}
     }
 
+    /**
+     * Generate map to store item relationships
+     * @throws SQLException
+     */
     public static void generateItemList() throws SQLException {
         String getItems = "SELECT * FROM item";
         try (
@@ -69,6 +77,11 @@ public class ServerUtils {
 		}
     }
 
+    /**
+     * Handle sign in
+     * @param email check database
+     * @param password check hashed database value
+     */
     public static void signIn(String email, String password) {
         User user = new User(email);
         int id;
@@ -98,6 +111,12 @@ public class ServerUtils {
         }
     }
 
+    /**
+     * Handle sign up
+     * @param name
+     * @param email
+     * @param password
+     */
     public static void signUp(String name, String email, String password) {
         User user = new User(email);
         
@@ -122,10 +141,18 @@ public class ServerUtils {
         }
     }
 
+    /**
+     * Add a new item to the database
+     * @param creatorEmail
+     * @param name
+     * @param description
+     * @param bidPriceStr
+     * @param buyPriceStr
+     */
     public static void addItem(String creatorEmail, String name, String description, String bidPriceStr, String buyPriceStr) {
         int creatorId = (guestList.get(creatorEmail));
 
-        if (name.isEmpty() || description.isEmpty() || bidPriceStr.isEmpty() || buyPriceStr.isEmpty()) {
+        if (name.isEmpty() || description.isEmpty() || bidPriceStr.isEmpty() || buyPriceStr.isEmpty()) { // handle empty case
             User user = new User(creatorEmail);
             Message message = new Message(Message.ServerMessage.ADD_ITEM_STATUS, "All fields must be completed", user);
             server.sendToClient(message);
@@ -136,21 +163,21 @@ public class ServerUtils {
         try {
             bidPrice = Double.valueOf(bidPriceStr);
             buyPrice = Double.valueOf(buyPriceStr);
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException e) { // handle non doubles
             User user = new User(creatorEmail);
             Message message = new Message(Message.ServerMessage.ADD_ITEM_STATUS, "Bid and buy prices must be numbers", user);
             server.sendToClient(message);
             return;
         }
 
-        if (bidPrice < 0 || buyPrice < 0) {
+        if (bidPrice < 0 || buyPrice < 0) { // handle negatives
             User user = new User(creatorEmail);
             Message message = new Message(Message.ServerMessage.ADD_ITEM_STATUS, "Bid and buy prices must be greater than 0", user);
             server.sendToClient(message);
             return;
         }
 
-        if (bidPrice >= buyPrice) {
+        if (bidPrice >= buyPrice) { // handle starting bid above buy price
             User user = new User(creatorEmail);
             Message message = new Message(Message.ServerMessage.ADD_ITEM_STATUS, "Bid price must be below buy price", user);
             server.sendToClient(message);
@@ -168,13 +195,17 @@ public class ServerUtils {
             sqle.printStackTrace();
         } catch (NullPointerException npe) {
             System.out.println("NullPointerException, this should only show up if you run CreateDB.java");
-        } catch (Exception e) {
+        } catch (Exception e) { // handle other invalid cases
             User user = new User(creatorEmail);
             Message message = new Message(Message.ServerMessage.ADD_ITEM_STATUS, "Invalid input, please try again", user);
             server.sendToClient(message);
         }
     }
 
+    /**
+     * Send information about newly added item to client
+     * @param newItem
+     */
     public static void getAddition(Item newItem) {
         Collection<BidItem> items = itemList.values();
         HashMap<String, Item> itemInfo = new HashMap<String, Item>();
@@ -194,14 +225,19 @@ public class ServerUtils {
         server.sendToClient(message);
     }
 
+    /**
+     * Check if a bid is valid
+     * @param bidderEmail person placing bid
+     * @param item item being bid on
+     */
     public static void checkBid(String bidderEmail, Item item) {
         BidItem bidItem = itemList.get(item.getName());
         int id = guestList.get(bidderEmail);
 
-        if (!bidItem.getBuyable()) {
+        if (!bidItem.getBuyable()) { // item has been sold
             User user = new User(bidderEmail);
             Message message = new Message(Message.ServerMessage.SEND_BID_STATUS,
-                    "Your bid is invalid", bidItem.toSimpleItem(bidderEmail), user);
+                    "This item is no longer buyable", bidItem.toSimpleItem(bidderEmail), user);
             server.sendToClient(message);
             return;
         }
@@ -209,15 +245,16 @@ public class ServerUtils {
         Double bidPrice;
         try {
             bidPrice = Double.valueOf(item.getBidPrice());
-        } catch (Exception e) {
+        } catch (Exception e) { // not double or bad formatting
             bidPrice = -1.0;
             User user = new User(bidderEmail);
             Message message = new Message(Message.ServerMessage.SEND_BID_STATUS,
-                    "This item is no longer buyable", bidItem.toSimpleItem(bidderEmail), user);
+                    "Your bid is invalid", bidItem.toSimpleItem(bidderEmail), user);
             server.sendToClient(message);
+            return;
         }
         
-        if (bidPrice > 0 && bidPrice >= bidItem.getBuyPrice()) {
+        if (bidPrice > 0 && bidPrice >= bidItem.getBuyPrice()) { // auto buy
             bidItem.setBidPrice(bidPrice);
             synchronized(lock) {
                 bidItem.setBidPrice(bidPrice);
@@ -227,12 +264,12 @@ public class ServerUtils {
             Message message = new Message(Message.ServerMessage.SEND_BID_STATUS, bidderEmail + " has won this auction!",
                     bidItem.toSimpleItem(bidderEmail), user);
             server.sendToClient(message);
-        } else if (bidPrice > 0 && bidPrice <= bidItem.getBidPrice()) {
+        } else if (bidPrice > 0 && bidPrice <= bidItem.getBidPrice()) { // bid too low
             User user = new User(bidderEmail);
             Message message = new Message(Message.ServerMessage.SEND_BID_STATUS, "Bid is not high enough",
                     bidItem.toSimpleItem(bidderEmail), user);
             server.sendToClient(message);
-        } else if (bidPrice > 0 && bidPrice > bidItem.getBidPrice()) {
+        } else if (bidPrice > 0 && bidPrice > bidItem.getBidPrice()) { // bid is valid, tell everyone
             synchronized(lock) {
                 bidItem.setBidPrice(bidPrice);
             }
@@ -241,7 +278,7 @@ public class ServerUtils {
             Message message = new Message(Message.ServerMessage.SEND_BID_STATUS, "Bid has been updated",
                     bidItem.toSimpleItem(bidderEmail), user);
             server.sendToClient(message);
-        } else {
+        } else { // negative bid
             User user = new User(bidderEmail);
             Message message = new Message(Message.ServerMessage.SEND_BID_STATUS, "Bid cannot be zero or negative",
                     bidItem.toSimpleItem(bidderEmail), user);
@@ -249,6 +286,9 @@ public class ServerUtils {
         }
     }
 
+    /**
+     * Send latest bid info to all clients
+     */
     public static void updateClientBidding() {
         Collection<BidItem> items = itemList.values();
         HashMap<String, Item> itemInfo = new HashMap<String, Item>();
@@ -268,12 +308,14 @@ public class ServerUtils {
         server.sendToClient(message);
     }
 
+    /**
+     * Update database with information once server is closed
+     */
     public static void updateItemDB() {
         Collection<BidItem> items = itemList.values();
         for (BidItem item : items) {
             try {
                 BidItem oldItem = db.getItem(item.getItemId());
-                System.out.println(oldItem);
                 oldItem = item;
                 System.out.println(oldItem);
                 db.updateItem(oldItem);

@@ -43,6 +43,9 @@ class Server extends Observable {
         }
     }
 
+    /**
+     * Initialize database with information
+     */
     private void setUpDatabase() {
         EmbeddedDataSource dataSource = new EmbeddedConnectionPoolDataSource();
         dataSource.setDatabaseName("ehills_users");
@@ -66,6 +69,10 @@ class Server extends Observable {
         System.out.println(ServerUtils.guestList);
     }
 
+    /**
+     * Setup server side threads
+     * @throws Exception
+     */
     private void setUpNetworking() throws Exception {
         @SuppressWarnings("resource")
         ServerSocket serverSock = new ServerSocket(4242);
@@ -80,6 +87,10 @@ class Server extends Observable {
         }
     }
 
+    /**
+     * Handle incoming messages from clients
+     * @param input message to be deciphered
+     */
     protected void processRequest(String input) {
         Gson gson = new Gson();
         Message message = gson.fromJson(input, Message.class);
@@ -118,6 +129,10 @@ class Server extends Observable {
         }
     }
 
+    /**
+     * Send message to client
+     * @param message
+     */
     public void sendToClient(Message message) {
         this.setChanged();
         this.notifyObservers(message);

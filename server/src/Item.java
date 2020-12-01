@@ -1,7 +1,15 @@
-import java.util.ArrayList;
+/*
+* EE422C Final Project submission by
+* Ishan Shah
+* irs428
+* 16165
+* Fall 2020
+*/
+
+import java.util.HashMap;
 
 public class Item {
-    public static ArrayList<Item> itemInfo;
+    public static HashMap<String, Item> itemInfo;
     private String name;
     private String description;
     private String bidPrice;
@@ -20,7 +28,7 @@ public class Item {
         this.bidPrice = bidPrice;
     }
 
-    public ArrayList<Item> getItemInfo() {
+    public HashMap<String, Item> getItemInfo() {
         return itemInfo;
     }
 

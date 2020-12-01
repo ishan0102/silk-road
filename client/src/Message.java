@@ -1,18 +1,19 @@
-import java.util.ArrayList;
-
 /*
- * EE422C Final Project submission by
- * Ishan Shah
+* EE422C Final Project submission by
+* Ishan Shah
  * irs428
  * 16165
  * Fall 2020
  */
+
+import java.util.HashMap;
 
 public class Message {
     public enum ClientMessage {
         SIGNIN, 
         SIGNUP,
         ADD_ITEM,
+        GET_NEW_ADDITION,
         GET_ITEM_INFO,
         SEND_BID
     }
@@ -21,6 +22,7 @@ public class Message {
         SIGNIN_STATUS, 
         SIGNUP_STATUS,
         ADD_ITEM_STATUS,
+        SEND_NEW_ADDITION,
         SEND_ITEM_INFO,
         SEND_BID_STATUS
     }
@@ -30,7 +32,7 @@ public class Message {
     private User user;
     private String status;
     private Item item;
-    private ArrayList<Item> itemInfo;
+    private HashMap<String, Item> itemInfo;
 
     public Message(ClientMessage clientMessageType, User user) {
         this.clientMessageType = clientMessageType;
@@ -58,9 +60,16 @@ public class Message {
         this.user = user;
     }
 
-    public Message(ServerMessage serverMessageType, ArrayList<Item> itemInfo, User user) {
+    public Message(ServerMessage serverMessageType, HashMap<String, Item> itemInfo, User user) {
         this.serverMessageType = serverMessageType;
         this.itemInfo = itemInfo;
+        this.user = user;
+    }
+
+    public Message(ServerMessage serverMessageType, HashMap<String, Item> itemInfo, Item item, User user) {
+        this.serverMessageType = serverMessageType;
+        this.itemInfo = itemInfo;
+        this.item = item;
         this.user = user;
     }
 
@@ -91,7 +100,7 @@ public class Message {
         return item;
     }
 
-    public ArrayList<Item> getItemInfo() {
+    public HashMap<String, Item> getItemInfo() {
         return itemInfo;
     }
 

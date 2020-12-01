@@ -229,14 +229,16 @@ public class UI {
         stage.show();
     }
 
+    public TabPane tabPane;
+    
     public void biddingScreen() {
         paneList = new HashMap<String, GridPane>();
         tabList = new HashMap<String, Tab>();
+        tabPane = new TabPane();
 
         client.sendToServer(new Message(Message.ClientMessage.GET_ITEM_INFO));
         waitForResponse();
 
-        TabPane tabPane = new TabPane();
         tabPane.setTabClosingPolicy(TabClosingPolicy.UNAVAILABLE);
         
         // Home tab
@@ -283,7 +285,7 @@ public class UI {
         tabPane.getTabs().add(home);
 
         // Add item tab
-        /* Tab addItem = new Tab("Add Item", new Label("Add a new item to the auction"));
+        Tab addItem = new Tab("Add Item", new Label("Add a new item to the auction"));
         GridPane addItemPane = new GridPane();
         addItemPane.getChildren().clear();
         addItemPane.setAlignment(Pos.CENTER);
@@ -328,10 +330,8 @@ public class UI {
                 addItemPane.add(addItemMessage, 0, 9);
                 GridPane.setHalignment(addItemMessage, HPos.CENTER);
 
-                // client.sendToServer(new Message(Message.ClientMessage.GET_ITEM_INFO));
-                // waitForResponse();
-                // Tab itemTab = addItemTab(item);
-                // tabPane.getTabs().add(itemTab);
+                client.sendToServer(new Message(Message.ClientMessage.GET_NEW_ADDITION, item));
+                waitForResponse();
             }
         });
 
@@ -353,16 +353,16 @@ public class UI {
         GridPane.setHalignment(addItemButton, HPos.RIGHT);
 
         addItem.setContent(addItemPane);
-        tabPane.getTabs().add(addItem); */
+        tabPane.getTabs().add(addItem);
         
         // Tab for every item in the auction
-        ArrayList<Item> items = Item.itemInfo;
-        for (Item item : items) {
+        HashMap<String, Item> items = Item.itemInfo;
+        for (Item item : items.values()) {
             Tab itemTab = addItemTab(item);
+            updateBidInfo(item, "");
             tabPane.getTabs().add(itemTab);
         }
  
-
         Scene scene = new Scene(tabPane);
         stage.setWidth(800);
         stage.setHeight(600);
@@ -371,8 +371,6 @@ public class UI {
         stage.show();
     }
 
-    public Label bidPrice = new Label("");
-    public Label sendBidMessage = new Label("");
     public HashMap<String, GridPane> paneList;
     public HashMap<String, Tab> tabList;
 
@@ -383,30 +381,6 @@ public class UI {
         itemPane.setAlignment(Pos.CENTER);
         itemPane.setVgap(10);
         itemPane.setHgap(5);
-
-        Label name = new Label("Item Name: " + item.getName());
-        Label description = new Label("Description: " + item.getDescription());
-        bidPrice.setText("Bid Price: $" + item.getBidPrice() + "0");
-        TextField addBid = new TextField();
-        addBid.setPromptText("Bid on this item");
-        
-        Button sendBid = new Button("Send Bid");
-        sendBid.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                User user = User.currentUser;
-                item.setBidPrice(addBid.getText());
-                Message message = new Message(Message.ClientMessage.SEND_BID, item, user);
-                client.sendToServer(message);
-            }
-        });
-
-        itemPane.add(name, 0, 0);
-        itemPane.add(description, 0, 1);
-        itemPane.add(addBid, 0, 3);
-        itemPane.add(sendBid, 0, 4);
-        GridPane.setHalignment(sendBid, HPos.CENTER);
-        itemTab.setContent(itemPane);
         
         paneList.put(item.getName(), itemPane);
         tabList.put(item.getName(), itemTab);
@@ -417,13 +391,37 @@ public class UI {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                sendBidMessage.setText(status);
-                bidPrice.setText("Bid Price: $" + item.getBidPrice());
-
                 GridPane itemPane = paneList.get(item.getName());
                 Tab itemTab = tabList.get(item.getName());
+                itemPane.getChildren().clear();
 
+                Label name = new Label("Item Name: " + item.getName());
+                Label description = new Label("Description: " + item.getDescription());
+                Label bidPrice = new Label("");
+                bidPrice.setText("Bid Price: $" + item.getBidPrice());
+                TextField addBid = new TextField();
+                addBid.setPromptText("Bid on this item");
+                
+                Button sendBid = new Button("Send Bid");
+                sendBid.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        User user = User.currentUser;
+                        item.setBidPrice(addBid.getText());
+                        Message message = new Message(Message.ClientMessage.SEND_BID, item, user);
+                        client.sendToServer(message);
+                    }
+                });
+                
+                Label sendBidMessage = new Label("");
+                sendBidMessage.setText(status);
+                
+                itemPane.add(name, 0, 0);
+                itemPane.add(description, 0, 1);
                 itemPane.add(bidPrice, 0, 2);
+                itemPane.add(addBid, 0, 3);
+                itemPane.add(sendBid, 0, 4);
+                GridPane.setHalignment(sendBid, HPos.CENTER);
                 itemPane.add(sendBidMessage, 0, 5);
                 GridPane.setHalignment(sendBidMessage, HPos.CENTER);
                 itemTab.setContent(itemPane);

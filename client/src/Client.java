@@ -10,12 +10,14 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.scene.control.Tab;
 import javafx.stage.Stage;
 
 public class Client extends Application {
@@ -59,7 +61,7 @@ public class Client extends Application {
         Gson gson = new Gson();
         Message message = gson.fromJson(input, Message.class);
         User user = message.getUser();
-        ArrayList<Item> itemInfo = message.getItemInfo();
+        HashMap<String, Item> itemInfo = message.getItemInfo();
         Item item = message.getItem();
         if (!user.email.equals("ALL CLIENTS")) {
             try {
@@ -83,10 +85,19 @@ public class Client extends Application {
                     Client.messageReceived = true;
                     break;
                 case ADD_ITEM_STATUS:
-                    Item.itemInfo = itemInfo;
                     UI.serverMessage = message.getStatus();
                     Client.messageReceived = true;
                     break;
+                case SEND_NEW_ADDITION:
+                    Item.itemInfo = itemInfo;
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            Tab itemTab = gui.addItemTab(itemInfo.get(item.getName()));
+                            gui.updateBidInfo(itemInfo.get(item.getName()), "");
+                            gui.tabPane.getTabs().add(itemTab);
+                        }
+                    });
                 case SEND_ITEM_INFO:
                     Item.itemInfo = itemInfo;
                     Client.messageReceived = true;

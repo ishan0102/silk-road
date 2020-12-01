@@ -10,7 +10,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
@@ -127,10 +126,10 @@ public class ServerUtils {
         BidItem newItem = new BidItem(name, description, bidPrice, buyPrice, creatorId); // item belongs to the creator until someone else bids
         try {
             db.insertBidItem(newItem);
+            itemList.putIfAbsent(name, newItem);
             User user = new User(creatorEmail);
             Message message = new Message(Message.ServerMessage.ADD_ITEM_STATUS, "Item added successfully!", user);
             server.sendToClient(message);
-            updateClientBidding();
         } catch (SQLException sqle) {
             sqle.printStackTrace();
         } catch (NullPointerException npe) {
@@ -138,6 +137,25 @@ public class ServerUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static void getAddition(Item newItem) {
+        Collection<BidItem> items = itemList.values();
+        HashMap<String, Item> itemInfo = new HashMap<String, Item>();
+        for (BidItem item : items) {
+            try {
+                Guest guest;
+                guest = db.getGuest(item.getBidderId());
+                String email = guest.getEmail();
+                itemInfo.put(item.getName(), item.toSimpleItem(email));
+            } catch (SQLException sqle) {
+                sqle.printStackTrace();
+            }
+        }
+        Item.itemInfo = itemInfo;
+        User user = new User("ALL CLIENTS");
+        Message message = new Message(Message.ServerMessage.SEND_NEW_ADDITION, itemInfo, newItem, user);
+        server.sendToClient(message);
     }
 
     public static void checkBid(String bidderEmail, Item item) {
@@ -184,17 +202,18 @@ public class ServerUtils {
 
     public static void updateClientBidding() {
         Collection<BidItem> items = itemList.values();
-        ArrayList<Item> itemInfo = new ArrayList<Item>();
+        HashMap<String, Item> itemInfo = new HashMap<String, Item>();
         for (BidItem item : items) {
             try {
                 Guest guest;
                 guest = db.getGuest(item.getBidderId());
                 String email = guest.getEmail();
-                itemInfo.add(item.toSimpleItem(email));
+                itemInfo.put(item.getName(), item.toSimpleItem(email));
             } catch (SQLException sqle) {
                 sqle.printStackTrace();
             }
         }
+        Item.itemInfo = itemInfo;
         User user = new User("ALL CLIENTS");
         Message message = new Message(Message.ServerMessage.SEND_ITEM_INFO, itemInfo, user);
         server.sendToClient(message);

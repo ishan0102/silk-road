@@ -51,6 +51,8 @@ public class UI {
     }
 
     public void waitForResponse() {
+        System.out.println("busywait1: " + serverMessage);
+        System.out.println(Client.messageReceived);
         while (!Client.messageReceived) {
             try {
                 Thread.sleep(10);
@@ -58,6 +60,8 @@ public class UI {
                 e.printStackTrace();
             }
         }
+        System.out.println("busywait2: " + serverMessage);
+        System.out.println(Client.messageReceived);
         Client.messageReceived = false;
     }
 
@@ -105,25 +109,35 @@ public class UI {
         TextField emailText = new TextField("");
         Label passwordLabel = new Label("Password");
         PasswordField passwordText = new PasswordField();
+        Label signInMessage = new Label();
 
         Button signInButton = new Button("Sign In");
         signInButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                System.out.println(1);
                 User user = new User(emailText.getText(), passwordText.getText());
+                System.out.println(2);
                 Message message = new Message(Message.ClientMessage.SIGNIN, user);
-                User.currentUser = user;
+                System.out.println(3);
+                Client.emailKey = emailText.getText();
+                System.out.println(4);
                 client.sendToServer(message);
+                System.out.println(5);
                 waitForResponse();
+                System.out.println(6);
+                System.out.println(serverMessage);
 
-                Label signInMessage = new Label(serverMessage);
+                signInMessage.setText(serverMessage);
                 signInMessage.setTextFill(Color.rgb(220, 20, 60));
+                signInPane.getChildren().remove(signInMessage);
                 signInPane.add(signInMessage, 0, 5);
                 GridPane.setHalignment(signInMessage, HPos.CENTER);
 
-                if (serverMessage.equals("Login successful")) {
+                user = User.currentUser;
+                if (serverMessage != null && serverMessage.equals("Login successful")) {
                     try {
-                        if (user.email.equals(User.currentUser.email)) {
+                        if (user.email != null && user.email.equals(User.currentUser.email)) {
                             biddingScreen();
                         }
                     } catch (NullPointerException e) {
@@ -176,6 +190,7 @@ public class UI {
         TextField emailText = new TextField("");
         Label passwordLabel = new Label("Password");
         PasswordField passwordText = new PasswordField();
+        Label signUpMessage = new Label("");
 
         Button signUpButton = new Button("Sign Up");
         signUpButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -183,12 +198,13 @@ public class UI {
             public void handle(ActionEvent event) {
                 User user = new User(nameText.getText(), emailText.getText(), passwordText.getText());
                 Message message = new Message(Message.ClientMessage.SIGNUP, user);
-                User.currentUser = user;
                 client.sendToServer(message);
                 waitForResponse();
+                User.currentUser = user;
 
-                Label signUpMessage = new Label(serverMessage);
+                signUpMessage.setText(serverMessage);
                 signUpMessage.setTextFill(Color.rgb(220, 20, 60));
+                signUpPane.getChildren().remove(signUpMessage);
                 signUpPane.add(signUpMessage, 0, 7);
                 GridPane.setHalignment(signUpMessage, HPos.CENTER);
 
@@ -264,6 +280,8 @@ public class UI {
         signOutButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                Client.emailKey = null;
+                User.currentUser = null;
                 login();
             }
         });
@@ -404,6 +422,7 @@ public class UI {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
+                System.out.println("running later 2");
                 GridPane itemPane = paneList.get(item.getName());
                 Tab itemTab = tabList.get(item.getName());
                 itemPane.getChildren().clear();

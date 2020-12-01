@@ -103,6 +103,7 @@ class Server extends Observable {
                 case GET_NEW_ADDITION:
                     System.out.println("getting new item added");
                     ServerUtils.getAddition(item);
+                    break;
                 case GET_ITEM_INFO:
                     System.out.println("retrieving item info");
                     ServerUtils.updateClientBidding();
@@ -111,6 +112,7 @@ class Server extends Observable {
                     System.out.println("checking bid");
                     System.out.println(user);
                     ServerUtils.checkBid(user.email, item);
+                    break;
             }
         } catch (Exception e) {
             e.printStackTrace();

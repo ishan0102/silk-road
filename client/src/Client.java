@@ -98,6 +98,7 @@ public class Client extends Application {
                             gui.tabPane.getTabs().add(itemTab);
                         }
                     });
+                    break;
                 case SEND_ITEM_INFO:
                     Item.itemInfo = itemInfo;
                     Client.messageReceived = true;

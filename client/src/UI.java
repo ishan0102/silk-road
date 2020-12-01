@@ -105,6 +105,7 @@ public class UI {
         TextField emailText = new TextField("");
         Label passwordLabel = new Label("Password");
         PasswordField passwordText = new PasswordField();
+        Label signInMessage = new Label();
 
         Button signInButton = new Button("Sign In");
         signInButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -116,8 +117,9 @@ public class UI {
                 client.sendToServer(message);
                 waitForResponse();
 
-                Label signInMessage = new Label(serverMessage);
+                signInMessage.setText(serverMessage);
                 signInMessage.setTextFill(Color.rgb(220, 20, 60));
+                signInPane.getChildren().remove(signInMessage);
                 signInPane.add(signInMessage, 0, 5);
                 GridPane.setHalignment(signInMessage, HPos.CENTER);
 
@@ -176,6 +178,7 @@ public class UI {
         TextField emailText = new TextField("");
         Label passwordLabel = new Label("Password");
         PasswordField passwordText = new PasswordField();
+        Label signUpMessage = new Label();
 
         Button signUpButton = new Button("Sign Up");
         signUpButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -187,8 +190,10 @@ public class UI {
                 client.sendToServer(message);
                 waitForResponse();
 
-                Label signUpMessage = new Label(serverMessage);
+                signUpMessage.setText(serverMessage);
+                Label signUpMessage = new Label(serverMessage);1
                 signUpMessage.setTextFill(Color.rgb(220, 20, 60));
+                signUpPane.getChildren().remove(signUpMessage);
                 signUpPane.add(signUpMessage, 0, 7);
                 GridPane.setHalignment(signUpMessage, HPos.CENTER);
 

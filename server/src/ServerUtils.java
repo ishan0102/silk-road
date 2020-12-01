@@ -16,7 +16,7 @@ import java.util.HashMap;
 import javax.sql.DataSource;
 
 public class ServerUtils {
-    private static Server server;
+    public static Server server;
     private static Database db;
     private static DataSource ds;
     public static HashMap<String, Integer> guestList;
@@ -217,5 +217,20 @@ public class ServerUtils {
         User user = new User("ALL CLIENTS");
         Message message = new Message(Message.ServerMessage.SEND_ITEM_INFO, itemInfo, user);
         server.sendToClient(message);
+    }
+
+    public static void updateItemDB() {
+        Collection<BidItem> items = itemList.values();
+        for (BidItem item : items) {
+            try {
+                BidItem oldItem = db.getItem(item.getItemId());
+                System.out.println(oldItem);
+                oldItem = item;
+                System.out.println(oldItem);
+                db.updateItem(oldItem);
+            } catch (SQLException sqle) {
+                sqle.printStackTrace();
+            }
+        }
     }
 }

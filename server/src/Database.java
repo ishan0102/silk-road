@@ -144,5 +144,49 @@ class Database {
             
 			insertItemStatement.executeUpdate();
 		}
+    }
+    
+    void updateItem(BidItem item) throws SQLException {
+		String updateItem = "UPDATE item " +
+				"SET name = ?, description = ?, bid_price = ?, buy_price = ?, bidder_id = ?, seller_id = ?, buyable = ?, valid = ? " +
+				"WHERE id = ?";
+		try (
+			Connection connection = dataSource.getConnection();
+			PreparedStatement updateItemStatement = connection.prepareStatement(updateItem);
+		) {
+			updateItemStatement.setString(1, item.getName());
+			updateItemStatement.setString(2, item.getDescription());
+			updateItemStatement.setDouble(3, item.getBidPrice());
+			updateItemStatement.setDouble(4, item.getBuyPrice());
+			updateItemStatement.setInt(5, item.getBidderId());
+			updateItemStatement.setInt(6, item.getSellerId());
+			updateItemStatement.setBoolean(7, item.getBuyable());
+            updateItemStatement.setBoolean(8, item.getValid());
+            
+			updateItemStatement.executeUpdate();
+		}
+	}
+	
+	BidItem getItem(int id) throws SQLException {
+		String selectItem = "SELECT * FROM item " +
+				"WHERE id = ?";
+		try (
+			Connection connection = dataSource.getConnection();
+			PreparedStatement selectGuestStatement = connection.prepareStatement(selectItem);
+		) {
+			selectGuestStatement.setInt(1, id);
+			ResultSet results = selectGuestStatement.executeQuery();
+			return readItemResultSet(results).get(0);
+		}
+	}
+	
+	private static List<BidItem> readItemResultSet(ResultSet rs) throws SQLException {
+		List<BidItem> itemList = new ArrayList<>();
+		while (rs.next()) {
+			itemList.add(new BidItem(rs.getInt("id"), rs.getString("name"), rs.getString("description"),
+                        rs.getDouble("bid_price"), rs.getDouble("buy_price"), rs.getInt("bidder_id"),
+                        rs.getInt("seller_id"), rs.getBoolean("buyable"), rs.getBoolean("valid")));
+		}
+		return itemList;
 	}
 }

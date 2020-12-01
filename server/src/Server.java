@@ -27,7 +27,7 @@ class Server extends Observable {
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
                 System.out.println("Shutdown Hook is running!");
-                ServerUtils.updateItemDB();
+                // ServerUtils.updateItemDB();
             }
         });
         server = new Server();
@@ -52,13 +52,6 @@ class Server extends Observable {
         if (!Files.isDirectory(Paths.get(System.getProperty("user.dir") + "/" + "ehills_users"))) {
             System.out.println("No database found, creating a new database.");
             CreateDB.createDB();
-            // try {
-            //     db.initialize();
-            //     System.out.println("Database initialized successfully.");
-            // } catch (SQLException sqle) {
-            //     System.out.println("Database initialization failed.");
-            //     sqle.printStackTrace();
-            // }
         } else {
             System.out.println("Database already exists.");
         }

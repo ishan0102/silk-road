@@ -321,6 +321,8 @@ public class ServerUtils {
                 db.updateItem(oldItem);
             } catch (SQLException sqle) {
                 sqle.printStackTrace();
+            } catch (NullPointerException e) {
+                
             }
         }
     }

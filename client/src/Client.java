@@ -27,7 +27,6 @@ public class Client extends Application {
     private PrintWriter toServer;
     public static boolean messageReceived;
     private UI gui;
-    public static String emailKey;
 
     public static void main(String[] args) {
         launch(args);
@@ -39,6 +38,7 @@ public class Client extends Application {
         System.out.println("Connecting to... " + socket);
         fromServer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         toServer = new PrintWriter(socket.getOutputStream());
+        messageReceived = false;
 
         Thread readerThread = new Thread(new Runnable() {
             @Override
@@ -63,30 +63,24 @@ public class Client extends Application {
         User user = message.getUser();
         HashMap<String, Item> itemInfo = message.getItemInfo();
         Item item = message.getItem();
-        
-        if (user == null) {
-            System.out.println("user null");
-            return;
+        if (!user.email.equals("ALL CLIENTS")) {
+            try {
+                if (!user.email.equals(User.currentUser.email)) {
+                    return;
+                }
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+            }
+            User.currentUser = user;
         }
 
-        if (!user.email.equals(emailKey) && !user.email.equals("ALL CLIENTS")) {
-            System.out.println("not right email key");
-            return;
-        }
-        
         try {
             switch (message.getServerMessageType()) {
                 case SIGNIN_STATUS:
-                    if (message.getStatus().equals("Login successful")) {
-                        User.currentUser = user;
-                    }
                     UI.serverMessage = message.getStatus();
                     Client.messageReceived = true;
                     break;
                 case SIGNUP_STATUS:
-                    if (message.getStatus().equals("Login successful")) {
-                        User.currentUser = user;
-                    }
                     UI.serverMessage = message.getStatus();
                     Client.messageReceived = true;
                     break;
@@ -99,7 +93,6 @@ public class Client extends Application {
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
-                            System.out.println("running later 1");
                             Tab itemTab = gui.addItemTab(itemInfo.get(item.getName()));
                             gui.updateBidInfo(itemInfo.get(item.getName()), "");
                             gui.tabPane.getTabs().add(itemTab);
@@ -117,8 +110,6 @@ public class Client extends Application {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        System.out.println("message received status should be false: " + Client.messageReceived);
     }
 
     public void sendToServer(Message message) {
@@ -131,8 +122,6 @@ public class Client extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        messageReceived = false;
-        
         try {
             this.setUpNetworking();
         } catch (Exception e) {

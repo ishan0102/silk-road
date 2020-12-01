@@ -16,7 +16,6 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Scene;
@@ -30,9 +29,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TabPane.TabClosingPolicy;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
 import javafx.scene.paint.Color;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
 public class UI {
@@ -51,8 +48,6 @@ public class UI {
     }
 
     public void waitForResponse() {
-        System.out.println("busywait1: " + serverMessage);
-        System.out.println(Client.messageReceived);
         while (!Client.messageReceived) {
             try {
                 Thread.sleep(10);
@@ -60,8 +55,6 @@ public class UI {
                 e.printStackTrace();
             }
         }
-        System.out.println("busywait2: " + serverMessage);
-        System.out.println(Client.messageReceived);
         Client.messageReceived = false;
     }
 
@@ -115,18 +108,11 @@ public class UI {
         signInButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                System.out.println(1);
                 User user = new User(emailText.getText(), passwordText.getText());
-                System.out.println(2);
                 Message message = new Message(Message.ClientMessage.SIGNIN, user);
-                System.out.println(3);
-                Client.emailKey = emailText.getText();
-                System.out.println(4);
+                User.currentUser = user;
                 client.sendToServer(message);
-                System.out.println(5);
                 waitForResponse();
-                System.out.println(6);
-                System.out.println(serverMessage);
 
                 signInMessage.setText(serverMessage);
                 signInMessage.setTextFill(Color.rgb(220, 20, 60));
@@ -134,10 +120,9 @@ public class UI {
                 signInPane.add(signInMessage, 0, 5);
                 GridPane.setHalignment(signInMessage, HPos.CENTER);
 
-                user = User.currentUser;
-                if (serverMessage != null && serverMessage.equals("Login successful")) {
+                if (serverMessage.equals("Login successful")) {
                     try {
-                        if (user.email != null && user.email.equals(User.currentUser.email)) {
+                        if (user.email.equals(User.currentUser.email)) {
                             biddingScreen();
                         }
                     } catch (NullPointerException e) {
@@ -198,9 +183,9 @@ public class UI {
             public void handle(ActionEvent event) {
                 User user = new User(nameText.getText(), emailText.getText(), passwordText.getText());
                 Message message = new Message(Message.ClientMessage.SIGNUP, user);
+                User.currentUser = user;
                 client.sendToServer(message);
                 waitForResponse();
-                User.currentUser = user;
 
                 signUpMessage.setText(serverMessage);
                 Label signUpMessage = new Label(serverMessage);
@@ -281,8 +266,6 @@ public class UI {
         signOutButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                Client.emailKey = null;
-                User.currentUser = null;
                 login();
             }
         });
@@ -423,7 +406,6 @@ public class UI {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                System.out.println("running later 2");
                 GridPane itemPane = paneList.get(item.getName());
                 Tab itemTab = tabList.get(item.getName());
                 itemPane.getChildren().clear();

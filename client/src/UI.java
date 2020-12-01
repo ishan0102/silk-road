@@ -9,15 +9,14 @@
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Scene;
@@ -26,11 +25,14 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TabPane.TabClosingPolicy;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
 import javafx.scene.paint.Color;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
 public class UI {
@@ -44,7 +46,7 @@ public class UI {
     }
 
     public void startGUI() {
-        stage.setTitle("eHills");
+        stage.setTitle("The Silk Road");
         login();
     }
 
@@ -242,7 +244,7 @@ public class UI {
         tabPane.setTabClosingPolicy(TabClosingPolicy.UNAVAILABLE);
         
         // Home tab
-        Tab home = new Tab("Home", new Label("Welcome to eHills!"));
+        Tab home = new Tab("Home", new Label("Welcome to The Silk Road!"));
         GridPane homePane = new GridPane();
         homePane.getChildren().clear();
         homePane.setAlignment(Pos.CENTER);
@@ -255,7 +257,7 @@ public class UI {
                         .withZone( ZoneId.systemDefault() );
         String datetime = formatter.format(user.lastVisit);
         String[] dt = datetime.split(" ");
-        Label welcome = new Label("Welcome to eHills " + user.name + 
+        Label welcome = new Label("Welcome to The Silk Road " + user.name + 
                     "! Your last visit was on " + dt[0] + " at " + dt[1] + " " + dt[2] + ".");
 
         Button signOutButton = new Button("Sign Out");
@@ -296,7 +298,10 @@ public class UI {
         TextField addNameText = new TextField("");
         addNameText.setPromptText("PlayStation 5");
         Label addDescriptionLabel = new Label("Description");
-        TextField addDescriptionText = new TextField("");
+        TextArea addDescriptionText = new TextArea("");
+        addDescriptionText.setPrefRowCount(4);
+        addDescriptionText.setPrefWidth(300);
+        addDescriptionText.setWrapText(true);
         addDescriptionText.setPromptText("Elite gaming console");
         Label addBidLabel = new Label("Starting Bid Price");
         TextField addBidText = new TextField("");

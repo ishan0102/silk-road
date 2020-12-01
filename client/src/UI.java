@@ -306,6 +306,7 @@ public class UI {
         addBuyText.setPromptText("1000.00");
 
         Button addItemButton = new Button("Add Item");
+        Label addItemMessage = new Label();
         addItemButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -314,24 +315,31 @@ public class UI {
                 Message message = new Message(Message.ClientMessage.ADD_ITEM, item);
                 client.sendToServer(message);
 
-                addNameText.clear();
-                addDescriptionText.clear();
-                addBidText.clear();
-                addBuyText.clear();
                 System.out.println(serverMessage);
                 System.out.println(Client.messageReceived);
 
                 waitForResponse();
 
-                Label addItemMessage = new Label();
+                // Label addItemMessage = new Label();
                 addItemMessage.setText("");
                 addItemMessage.setText(serverMessage);
-                addItemMessage.setTextFill(Color.rgb(0, 100, 0));
+                if (serverMessage.equals("Item added successfully!")) {
+                    addItemMessage.setTextFill(Color.rgb(0, 100, 0));
+                    addNameText.clear();
+                    addDescriptionText.clear();
+                    addBidText.clear();
+                    addBuyText.clear();
+                } else {
+                    addItemMessage.setTextFill(Color.rgb(220, 20, 60));
+                }
+                addItemPane.getChildren().remove(addItemMessage);
                 addItemPane.add(addItemMessage, 0, 9);
                 GridPane.setHalignment(addItemMessage, HPos.CENTER);
 
-                client.sendToServer(new Message(Message.ClientMessage.GET_NEW_ADDITION, item));
-                waitForResponse();
+                if (serverMessage.equals("Item added successfully!")) {
+                    client.sendToServer(new Message(Message.ClientMessage.GET_NEW_ADDITION, item));
+                    waitForResponse();
+                }
             }
         });
 

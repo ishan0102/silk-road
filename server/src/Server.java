@@ -99,8 +99,7 @@ class Server extends Observable {
                     break;
                 case ADD_ITEM:
                     System.out.println("attempting to add item");
-                    ServerUtils.addItem(item.getEmail(), item.getName(), item.getDescription(),
-                            Double.valueOf(item.getBidPrice()), Double.valueOf(item.getBuyPrice()));
+                    ServerUtils.addItem(item.getEmail(), item.getName(), item.getDescription(), item.getBidPrice(), item.getBuyPrice());
                     break;
                 case GET_NEW_ADDITION:
                     System.out.println("getting new item added");

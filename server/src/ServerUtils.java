@@ -121,8 +121,41 @@ public class ServerUtils {
         }
     }
 
-    public static void addItem(String creatorEmail, String name, String description, Double bidPrice, Double buyPrice) {
+    public static void addItem(String creatorEmail, String name, String description, String bidPriceStr, String buyPriceStr) {
         int creatorId = (guestList.get(creatorEmail));
+
+        if (name.isEmpty() || description.isEmpty() || bidPriceStr.isEmpty() || buyPriceStr.isEmpty()) {
+            User user = new User(creatorEmail);
+            Message message = new Message(Message.ServerMessage.ADD_ITEM_STATUS, "All fields must be completed", user);
+            server.sendToClient(message);
+            return;
+        }
+
+        Double bidPrice, buyPrice;
+        try {
+            bidPrice = Double.valueOf(bidPriceStr);
+            buyPrice = Double.valueOf(buyPriceStr);
+        } catch (NumberFormatException e) {
+            User user = new User(creatorEmail);
+            Message message = new Message(Message.ServerMessage.ADD_ITEM_STATUS, "Bid and buy prices must be numbers", user);
+            server.sendToClient(message);
+            return;
+        }
+
+        if (bidPrice < 0 || buyPrice < 0) {
+            User user = new User(creatorEmail);
+            Message message = new Message(Message.ServerMessage.ADD_ITEM_STATUS, "Bid and buy prices must be greater than 0", user);
+            server.sendToClient(message);
+            return;
+        }
+
+        if (buyPrice < bidPrice) {
+            User user = new User(creatorEmail);
+            Message message = new Message(Message.ServerMessage.ADD_ITEM_STATUS, "Buy price must be above starting bid", user);
+            server.sendToClient(message);
+            return;
+        }
+
         BidItem newItem = new BidItem(name, description, bidPrice, buyPrice, creatorId); // item belongs to the creator until someone else bids
         try {
             db.insertBidItem(newItem);
@@ -135,7 +168,9 @@ public class ServerUtils {
         } catch (NullPointerException npe) {
             System.out.println("NullPointerException, this should only show up if you run CreateDB.java");
         } catch (Exception e) {
-            e.printStackTrace();
+            User user = new User(creatorEmail);
+            Message message = new Message(Message.ServerMessage.ADD_ITEM_STATUS, "Invalid input, please try again", user);
+            server.sendToClient(message);
         }
     }
 

@@ -478,7 +478,7 @@ public class UI {
                 sendBidMessage.setText(status);
                 if (status.contains("has won this auction")) {
                     sendBidMessage.setTextFill(Color.rgb(0, 100, 0));
-                } else if (status.contains("Bid has been updated")) {
+                } else if (status.contains("placed a bid")) {
                     sendBidMessage.setTextFill(Color.PURPLE);
                 } else {
                     sendBidMessage.setTextFill(Color.rgb(220, 20, 60));

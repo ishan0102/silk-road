@@ -190,7 +190,7 @@ public class UI {
         TextField emailText = new TextField("");
         Label passwordLabel = new Label("Password");
         PasswordField passwordText = new PasswordField();
-        Label signUpMessage = new Label("");
+        Label signUpMessage = new Label();
 
         Button signUpButton = new Button("Sign Up");
         signUpButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -203,6 +203,7 @@ public class UI {
                 User.currentUser = user;
 
                 signUpMessage.setText(serverMessage);
+                Label signUpMessage = new Label(serverMessage);
                 signUpMessage.setTextFill(Color.rgb(220, 20, 60));
                 signUpPane.getChildren().remove(signUpMessage);
                 signUpPane.add(signUpMessage, 0, 7);

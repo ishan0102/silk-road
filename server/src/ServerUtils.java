@@ -137,7 +137,7 @@ public class ServerUtils {
         } catch (SQLException sqle) {
             sqle.printStackTrace();
         } catch (NullPointerException npe) {
-            System.out.println("NullPointerException, this should only show up if you run CreateDB.java");
+            // System.out.println("NullPointerException, this should only show up if you run CreateDB.java");
         }
     }
 
@@ -322,7 +322,7 @@ public class ServerUtils {
             } catch (SQLException sqle) {
                 sqle.printStackTrace();
             } catch (NullPointerException e) {
-                
+
             }
         }
     }

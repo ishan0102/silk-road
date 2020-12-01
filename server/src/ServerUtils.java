@@ -275,7 +275,7 @@ public class ServerUtils {
             }
             bidItem.setBidderId(id);
             User user = new User("ALL CLIENTS");
-            Message message = new Message(Message.ServerMessage.SEND_BID_STATUS, "Bid has been updated",
+            Message message = new Message(Message.ServerMessage.SEND_BID_STATUS, bidderEmail + " has placed a bid",
                     bidItem.toSimpleItem(bidderEmail), user);
             server.sendToClient(message);
         } else { // negative bid

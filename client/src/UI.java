@@ -327,7 +327,6 @@ public class UI {
 
                 waitForResponse();
 
-                // Label addItemMessage = new Label();
                 addItemMessage.setText("");
                 addItemMessage.setText(serverMessage);
                 if (serverMessage.equals("Item added successfully!")) {

@@ -194,7 +194,7 @@ public class ServerUtils {
         } catch (SQLException sqle) {
             sqle.printStackTrace();
         } catch (NullPointerException npe) {
-            System.out.println("NullPointerException, this should only show up if you run CreateDB.java");
+            // System.out.println("NullPointerException, this should only show up if you run CreateDB.java");
         } catch (Exception e) { // handle other invalid cases
             User user = new User(creatorEmail);
             Message message = new Message(Message.ServerMessage.ADD_ITEM_STATUS, "Invalid input, please try again", user);

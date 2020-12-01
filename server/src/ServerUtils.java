@@ -83,7 +83,8 @@ public class ServerUtils {
         try {
             Guest guest = db.getGuest(id);
             Message message;
-            if (email.equals(guest.getEmail()) && password.equals(guest.getPassword())) {
+            String pw = Integer.toString(password.hashCode());
+            if (email.equals(guest.getEmail()) && pw.equals(guest.getPassword())) {
                 user = new User(guest.getName(), guest.getEmail(), guest.getPassword(), guest.getLastVisit());
                 guest.recordVisit();
                 db.updateGuest(guest);
@@ -105,7 +106,7 @@ public class ServerUtils {
             server.sendToClient(message);
             return;
         }
-        Guest guest = new Guest(name, email, password);
+        Guest guest = new Guest(name, email, Integer.toString(password.hashCode()));
         int id;
         try {
             guest.recordVisit();
@@ -149,9 +150,9 @@ public class ServerUtils {
             return;
         }
 
-        if (buyPrice < bidPrice) {
+        if (bidPrice >= buyPrice) {
             User user = new User(creatorEmail);
-            Message message = new Message(Message.ServerMessage.ADD_ITEM_STATUS, "Buy price must be above starting bid", user);
+            Message message = new Message(Message.ServerMessage.ADD_ITEM_STATUS, "Bid price must be below buy price", user);
             server.sendToClient(message);
             return;
         }

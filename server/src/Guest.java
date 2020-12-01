@@ -57,6 +57,6 @@ class Guest {
     
     @Override
     public String toString() {
-        return "id: " + id + ", name: " + name + ", email: " + email + ", password: " + password + ", lastVisit: " + lastVisit;
+        return "id: " + id + ", name: " + name + ", email: " + email + ", lastVisit: " + lastVisit;
     }
 }

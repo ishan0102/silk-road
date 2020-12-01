@@ -438,7 +438,15 @@ public class UI {
                 });
                 
                 Label sendBidMessage = new Label("");
+                sendBidMessage.setFont(new Font("Arial", 15));
                 sendBidMessage.setText(status);
+                if (status.contains("has won this auction")) {
+                    sendBidMessage.setTextFill(Color.rgb(0, 100, 0));
+                } else if (status.contains("Bid has been updated")) {
+                    sendBidMessage.setTextFill(Color.BLACK);
+                } else {
+                    sendBidMessage.setTextFill(Color.rgb(220, 20, 60));
+                }
                 
                 itemPane.add(name, 0, 0);
                 GridPane.setHalignment(name, HPos.CENTER);

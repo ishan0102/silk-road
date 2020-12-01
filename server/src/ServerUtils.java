@@ -197,6 +197,14 @@ public class ServerUtils {
     public static void checkBid(String bidderEmail, Item item) {
         BidItem bidItem = itemList.get(item.getName());
         int id = guestList.get(bidderEmail);
+
+        if (!bidItem.getBuyable()) {
+            User user = new User(bidderEmail);
+            Message message = new Message(Message.ServerMessage.SEND_BID_STATUS,
+                    "Your bid is invalid", bidItem.toSimpleItem(bidderEmail), user);
+            server.sendToClient(message);
+            return;
+        }
         
         Double bidPrice;
         try {
@@ -205,7 +213,7 @@ public class ServerUtils {
             bidPrice = -1.0;
             User user = new User(bidderEmail);
             Message message = new Message(Message.ServerMessage.SEND_BID_STATUS,
-                    "Your bid is invalid (" + e.toString() + ")", bidItem.toSimpleItem(bidderEmail), user);
+                    "This item is no longer buyable", bidItem.toSimpleItem(bidderEmail), user);
             server.sendToClient(message);
         }
         
@@ -219,6 +227,11 @@ public class ServerUtils {
             Message message = new Message(Message.ServerMessage.SEND_BID_STATUS, bidderEmail + " has won this auction!",
                     bidItem.toSimpleItem(bidderEmail), user);
             server.sendToClient(message);
+        } else if (bidPrice > 0 && bidPrice <= bidItem.getBidPrice()) {
+            User user = new User(bidderEmail);
+            Message message = new Message(Message.ServerMessage.SEND_BID_STATUS, "Bid is not high enough",
+                    bidItem.toSimpleItem(bidderEmail), user);
+            server.sendToClient(message);
         } else if (bidPrice > 0 && bidPrice > bidItem.getBidPrice()) {
             synchronized(lock) {
                 bidItem.setBidPrice(bidPrice);
@@ -228,9 +241,9 @@ public class ServerUtils {
             Message message = new Message(Message.ServerMessage.SEND_BID_STATUS, "Bid has been updated",
                     bidItem.toSimpleItem(bidderEmail), user);
             server.sendToClient(message);
-        } else if (bidPrice > 0 && bidPrice <= bidItem.getBidPrice()) {
+        } else {
             User user = new User(bidderEmail);
-            Message message = new Message(Message.ServerMessage.SEND_BID_STATUS, "Bid is not high enough",
+            Message message = new Message(Message.ServerMessage.SEND_BID_STATUS, "Bid cannot be zero or negative",
                     bidItem.toSimpleItem(bidderEmail), user);
             server.sendToClient(message);
         }

@@ -1,4 +1,4 @@
-# EE 422C Final Project - The Silk Road
+# Silk Road
 This is my final project for EE 422C: Software Implementation and Design II taught by Dr. Vallath Nandakumar in Fall 2020. The project is an auction system that allows multiple clients to bid on items.
 
 ## Programmer POV

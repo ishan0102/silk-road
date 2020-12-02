@@ -26,8 +26,8 @@ Each client is built using a JavaFX framework. The GUI contains multiple scenes 
 Some resources are shared between the server and client for convenience and to facilitate server client communication.
 
 **Classes**
-- Message: Contains all possible data to be passed between the server and client. Messages generally contain a `Type` to distinguish what kind of message it is, the user the message is intended for, and some kind of data, whether it be login info, bid updates, or item specifications. Messages are passed using JSON over sockets.
-- User: Contains all user credentials including name, email, password, and time of last visit.
+- `Message`: Contains all possible data to be passed between the server and client. Messages generally contain a `Type` to distinguish what kind of message it is, the user the message is intended for, and some kind of data, whether it be login info, bid updates, or item specifications. Messages are passed using JSON over sockets.
+- `User`: Contains all user credentials including name, email, password, and time of last visit.
 - `Item`: Contains simplified item information purely to be displayed on the front end for clients.
 
 ## User POV
@@ -35,6 +35,7 @@ The user POV involves a single client and their experience using this applicatio
 
 ### User Registration
 Users are either able to sign in or sign up upon entry. Clicking either of these buttons will navigate the user to a respective page.
+
 ![Login](assets/login.png)
 
 A new user will be asked for their name, email, and password. Entering invalid information or causing other errors is appropriately handled by sending the user a status update on the issue.
@@ -43,14 +44,17 @@ A new user will be asked for their name, email, and password. Entering invalid i
 
 ### Home Page
 Once a user has logged in, they are greeted with the home page. This screen also has buttons to either sign out or quit the applicatin entirely.
+
 ![Home](assets/home.png)
 
 ### Bidding
 Users are able to bid on items and will receive instant feedback on whether their bid was successful and if they have won the auction. Entering invalid bids (non-numbers, negative numbers, or bids that are not high enough) will cause a status update to appear explaining the issue. Also, once an item is bought no other users are able to bid on it.
+
 ![Bidding](assets/bidding.png)
 
 ### Add Item
 Users are also able to add new items to the auction by filling out data like the item name, description, bid price, and buy price, and the item will be added to everyone's bidding screens and users can immediately start bidding on it.
+
 ![Add item](assets/add-item.png)
 
 ## Mode of Use
